@@ -84,22 +84,22 @@
 
         /* El Mensaje principal */
         .message {
-            font-size: clamp(2rem, 10vw, 5rem);
+            font-size: clamp(2rem, 10vw, 4rem);
             font-weight: bold;
             color: #f8b7d8;
             text-shadow: 0 0 15px #ff9ec5, 0 0 30px #ff85b3, 0 0 45px #ff6ba1;
             animation: glow 2s infinite alternate, 
                          breath 4s infinite alternate ease-in-out;
             white-space: pre-wrap;
-            line-height: 1.2;
+            line-height: 1.3;
             text-align: center;
-            padding: 0 10px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.1);
             -webkit-backdrop-filter: blur(15px);
             backdrop-filter: blur(15px);
             border-radius: 20px;
-            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 90%;
         }
 
         /* Botón de control de audio optimizado para touch */
@@ -133,13 +133,35 @@
         /* Palabras "TE AMO" que aparecen al hacer click */
         .te-amo-popup {
             position: absolute;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #ff9ec5;
             text-shadow: 0 0 10px rgba(255, 158, 197, 0.7);
             pointer-events: none;
             z-index: 3;
             animation: popupFloat 3s ease-out forwards;
+            font-family: 'Mali', cursive;
+        }
+
+        /* Palabras flotantes estilo LoveLoom */
+        .floating-words {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-word {
+            position: absolute;
+            font-size: 1.2rem;
+            color: #f8b7d8;
+            font-weight: 600;
+            opacity: 0;
+            text-shadow: 0 0 8px rgba(248, 183, 216, 0.5);
+            animation: floatWord 20s infinite linear;
             font-family: 'Mali', cursive;
         }
 
@@ -195,6 +217,23 @@
             }
         }
 
+        @keyframes floatWord {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         /* Mejoras específicas para móviles */
         @media (max-width: 768px) {
             .btn-audio-toggle {
@@ -204,12 +243,17 @@
             }
             
             .message {
-                line-height: 1.1;
+                font-size: clamp(1.8rem, 8vw, 3.5rem);
+                line-height: 1.2;
                 padding: 15px;
             }
 
             .te-amo-popup {
                 font-size: 1.5rem;
+            }
+
+            .floating-word {
+                font-size: 1rem;
             }
         }
 
@@ -228,6 +272,11 @@
                 width: 40px;
                 height: 40px;
             }
+
+            .message {
+                font-size: clamp(1.5rem, 7vw, 3rem);
+                padding: 12px;
+            }
         }
     </style>
 </head>
@@ -235,10 +284,9 @@
 
     <canvas id="three-canvas"></canvas>
     
-    <!-- Audio con fuente alternativa -->
+    <!-- Audio con la música original -->
     <audio id="myAudio" loop>
-        <source src="https://audio.jukehost.co.uk/4Qfzq8D9LxJ5t5l3qK3U4c8Q9p8J3y2a" type="audio/mpeg">
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_ecb733f565.mp3?filename=romantic-piano-soft-music-141374.mp3" type="audio/mpeg">
+        <source src="https://a128-z3.zmdcdn.me/d5e48d317636af55834b87b0fd9fd5fe?authen=exp=1762399955~acl=/d5e48d317636af55834b87b0fd9fd5fe*~hmac=537e951475297463e4a86ebf0646086e" type="audio/mpeg">
         Tu navegador no soporta el audio.
     </audio>
 
@@ -247,6 +295,9 @@
     <button id="toggle-audio" class="btn-audio-toggle">
         <i id="audio-icon" class="fa-solid fa-volume-high"></i>
     </button>
+
+    <!-- Contenedor para palabras flotantes -->
+    <div class="floating-words" id="floating-words"></div>
 
     <div class="container" id="click-overlay">
         <h1>Toca para empezar</h1>
@@ -269,6 +320,7 @@ MY ALEJ</div>
         const toggleAudioBtn = document.getElementById('toggle-audio');
         const audioIcon = document.getElementById('audio-icon');
         const loading = document.getElementById('loading');
+        const floatingWordsContainer = document.getElementById('floating-words');
 
         let isPlaying = false;
         let isInitialized = false;
@@ -284,30 +336,25 @@ MY ALEJ</div>
             '#E6B8C9', '#F2C2D1', '#FFCCD5', '#FFDFE3'
         ];
 
-        // Configurar audio para autoplay
+        // Lista completa de palabras románticas
+        const romanticWords = [
+            "TE AMO", "FOREVER", "LOVE", "AMOR", "TI AMO", "TE QUIERO", 
+            "SOULMATE", "DESTINY", "PASSION", "ROMANCE", "DEVOTION", 
+            "AFFECTION", "SWEETHEART", "DARLING", "BELOVED", "ADORE", 
+            "CHERISH", "TREASURE", "HEART", "SOUL", "TOGETHER", "ALWAYS", 
+            "FOREVER", "INFINITY", "HAPPINESS", "JOY", "BLISS", "ECSTASY", 
+            "PARADISE", "HEAVEN", "BEAUTIFUL", "PERFECT", "ANGEL", "DREAM", 
+            "MAGIC", "KISS", "HUG", "TOUCH", "SMILE", "LAUGH", "FOREVER YOURS", 
+            "MY EVERYTHING", "MY WORLD", "MY HEART", "MY SOUL", "ETERNITY",
+            "PERFECT", "HAPPINESS", "AFFECTION", "FOREVER NOTION"
+        ];
+
+        // Configurar audio
         audio.muted = false;
-        audio.preload = "auto";
 
-        // Prevenir comportamiento por defecto en móvil
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
-        });
-
-        // Eventos para iniciar la experiencia - SIMPLIFICADO
-        overlay.addEventListener('click', function() {
-            startExperience();
-        });
-
-        overlay.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            startExperience();
-        }, { passive: false });
+        // Eventos para iniciar la experiencia
+        overlay.addEventListener('click', startExperience);
+        overlay.addEventListener('touchend', startExperience, { passive: false });
 
         function startExperience() {
             if (isInitialized) return;
@@ -315,65 +362,34 @@ MY ALEJ</div>
             console.log("Iniciando experiencia...");
             isInitialized = true;
             
-            // Mostrar loading inmediatamente
+            // Mostrar loading
             loading.style.display = 'block';
             overlay.style.opacity = '0.7';
             
-            // Iniciar Three.js inmediatamente
+            // Iniciar todo inmediatamente
             initThreeScene();
+            startFloatingWords();
             
             // Intentar reproducir audio
-            playAudioWithRetry();
+            playAudio();
         }
 
-        function playAudioWithRetry() {
+        function playAudio() {
             console.log("Intentando reproducir audio...");
             
-            // Primero intentamos play directo
-            const playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Audio empezó correctamente
-                    console.log("Audio reproducido exitosamente");
-                    audioStarted();
-                }).catch(error => {
-                    console.log("Error en play directo:", error);
-                    // Fallback: intentar con user gesture
-                    attemptAudioWithUserGesture();
-                });
-            } else {
-                attemptAudioWithUserGesture();
-            }
+            // En móvil, necesitamos user interaction
+            audio.play().then(() => {
+                console.log("Audio reproducido exitosamente");
+                completeInitialization();
+            }).catch(error => {
+                console.log("Error en reproducción automática:", error);
+                // En móvil, mostramos el botón para que el usuario active el audio manualmente
+                completeInitialization();
+            });
         }
 
-        function attemptAudioWithUserGesture() {
-            console.log("Intentando con gesto de usuario...");
-            
-            // Creamos un botón temporal para forzar user gesture
-            const tempButton = document.createElement('button');
-            tempButton.style.display = 'none';
-            tempButton.innerText = 'Play Audio';
-            document.body.appendChild(tempButton);
-            
-            setTimeout(() => {
-                tempButton.click();
-                setTimeout(() => {
-                    audio.play().then(() => {
-                        console.log("Audio iniciado con user gesture");
-                        audioStarted();
-                    }).catch(error => {
-                        console.log("Falló incluso con user gesture:", error);
-                        // Continuar sin audio
-                        audioStarted();
-                    });
-                    document.body.removeChild(tempButton);
-                }, 100);
-            }, 100);
-        }
-
-        function audioStarted() {
-            console.log("Audio iniciado, mostrando contenido...");
+        function completeInitialization() {
+            console.log("Completando inicialización...");
             
             // Ocultar loading y overlay
             loading.style.display = 'none';
@@ -386,9 +402,58 @@ MY ALEJ</div>
             
             // Iniciar efectos
             startTypewriter();
-            
-            // Crear algunos "TE AMO" iniciales
             createInitialTeAmo();
+        }
+
+        // Sistema de palabras flotantes 2D
+        function startFloatingWords() {
+            // Crear palabras flotantes continuamente
+            setInterval(() => {
+                createFloatingWord();
+            }, 1000);
+
+            // Crear palabras iniciales
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    createFloatingWord();
+                }, i * 300);
+            }
+        }
+
+        function createFloatingWord() {
+            const word = document.createElement('div');
+            word.className = 'floating-word';
+            
+            const randomWord = romanticWords[Math.floor(Math.random() * romanticWords.length)];
+            word.textContent = randomWord;
+            
+            const left = Math.random() * 85 + 5;
+            word.style.left = left + '%';
+            
+            const size = Math.random() * 0.8 + 0.7;
+            word.style.fontSize = size + 'rem';
+            
+            const opacity = Math.random() * 0.4 + 0.4;
+            word.style.opacity = opacity;
+            
+            const duration = Math.random() * 10 + 20;
+            word.style.animationDuration = duration + 's';
+            
+            const delay = Math.random() * 5;
+            word.style.animationDelay = delay + 's';
+            
+            const hue = Math.random() * 20 + 320;
+            const saturation = Math.random() * 30 + 60;
+            const lightness = Math.random() * 20 + 60;
+            word.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            
+            floatingWordsContainer.appendChild(word);
+            
+            setTimeout(() => {
+                if (word.parentNode) {
+                    word.parentNode.removeChild(word);
+                }
+            }, (duration + delay) * 1000);
         }
 
         // Función para crear popup "TE AMO"
@@ -402,7 +467,6 @@ MY ALEJ</div>
             
             document.body.appendChild(teAmo);
             
-            // Remover después de la animación
             setTimeout(() => {
                 if (teAmo.parentNode) {
                     teAmo.parentNode.removeChild(teAmo);
@@ -411,13 +475,12 @@ MY ALEJ</div>
         }
 
         function createInitialTeAmo() {
-            // Crear algunos TE AMO iniciales
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 5; i++) {
                 setTimeout(() => {
                     const x = Math.random() * window.innerWidth;
                     const y = Math.random() * window.innerHeight;
                     createTeAmoPopup(x, y);
-                }, i * 500);
+                }, i * 800);
             }
         }
 
@@ -468,44 +531,38 @@ MY ALEJ</div>
             setTimeout(typeWriter, 500);
         }
 
-        // THREE.JS - Efecto 3D como LoveLoom
+        // THREE.JS - Efecto 3D mejorado para móvil
         function initThreeScene() {
             try {
-                console.log("Inicializando Three.js...");
-                
                 // Escena
                 scene = new THREE.Scene();
-                scene.background = new THREE.Color(0x000000);
                 
                 // Cámara
-                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-                camera.position.z = 100;
+                camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+                camera.position.z = 50;
                 
                 // Renderer
                 renderer = new THREE.WebGLRenderer({ 
                     canvas: document.getElementById('three-canvas'),
                     alpha: true,
-                    antialias: !isMobile,
+                    antialias: true,
                     powerPreference: "high-performance"
                 });
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(isMobile ? Math.min(1.5, window.devicePixelRatio) : window.devicePixelRatio);
+                renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
                 
                 // Crear partículas de fondo
                 createParticles();
-                
-                // Crear textos 3D flotantes
-                createFloatingTexts3D();
                 
                 // Luces
                 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
                 scene.add(ambientLight);
                 
-                const directionalLight = new THREE.DirectionalLight(0xff9ec5, 1);
+                const directionalLight = new THREE.DirectionalLight(0xff9ec5, 0.8);
                 directionalLight.position.set(1, 1, 1);
                 scene.add(directionalLight);
                 
-                // Eventos de mouse/touch para movimiento 3D
+                // Eventos para movimiento 3D
                 document.addEventListener('mousemove', onDocumentMouseMove);
                 document.addEventListener('touchmove', onDocumentTouchMove, { passive: true });
                 
@@ -515,29 +572,21 @@ MY ALEJ</div>
                 // Resize handler
                 window.addEventListener('resize', onWindowResize);
                 
-                console.log("Three.js inicializado correctamente");
-                
             } catch (error) {
-                console.error('Error inicializando Three.js:', error);
+                console.error('Error en Three.js:', error);
             }
         }
 
         function createParticles() {
-            const particlesCount = isMobile ? 800 : 1500;
+            const particlesCount = isMobile ? 500 : 1000;
             const positions = new Float32Array(particlesCount * 3);
             const colors = new Float32Array(particlesCount * 3);
             
             for (let i = 0; i < particlesCount * 3; i += 3) {
-                // Posiciones aleatorias en una esfera grande
-                const radius = 150;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(2 * Math.random() - 1);
+                positions[i] = (Math.random() - 0.5) * 200;
+                positions[i + 1] = (Math.random() - 0.5) * 200;
+                positions[i + 2] = (Math.random() - 0.5) * 200;
                 
-                positions[i] = radius * Math.sin(phi) * Math.cos(theta);
-                positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-                positions[i + 2] = radius * Math.cos(phi);
-                
-                // Colores pastel
                 const color = new THREE.Color(pastelColors[Math.floor(Math.random() * pastelColors.length)]);
                 colors[i] = color.r;
                 colors[i + 1] = color.g;
@@ -549,10 +598,10 @@ MY ALEJ</div>
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             
             const material = new THREE.PointsMaterial({
-                size: isMobile ? 2 : 2.5,
+                size: 2,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.7,
+                opacity: 0.6,
                 sizeAttenuation: true
             });
             
@@ -560,54 +609,15 @@ MY ALEJ</div>
             scene.add(particles);
         }
 
-        function createFloatingTexts3D() {
-            const romanticWords = ["TE AMO", "FOREVER", "LOVE", "MI AMOR", "SIEMPRE", "ETERNITY"];
-            
-            // Usar geometría básica si la fuente no carga
-            romanticWords.forEach((word, index) => {
-                createSimpleText3D(word, index);
-            });
-        }
-
-        function createSimpleText3D(text, index) {
-            // Crear un cubo o esfera como placeholder del texto
-            const geometry = new THREE.SphereGeometry(3, 8, 6);
-            const material = new THREE.MeshPhongMaterial({
-                color: new THREE.Color(pastelColors[index % pastelColors.length]),
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            // Posición aleatoria en una esfera
-            const radius = 30 + Math.random() * 20;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            
-            mesh.position.x = radius * Math.sin(phi) * Math.cos(theta);
-            mesh.position.y = radius * Math.sin(phi) * Math.sin(theta);
-            mesh.position.z = radius * Math.cos(phi);
-            
-            mesh.userData = {
-                originalPosition: mesh.position.clone(),
-                speed: Math.random() * 0.02 + 0.01,
-                angle: Math.random() * Math.PI * 2
-            };
-            
-            scene.add(mesh);
-            floatingTexts.push(mesh);
-        }
-
         function onDocumentMouseMove(event) {
-            mouseX = (event.clientX - windowHalfX) * 0.0005;
-            mouseY = (event.clientY - windowHalfY) * 0.0005;
+            mouseX = (event.clientX - windowHalfX) * 0.005;
+            mouseY = (event.clientY - windowHalfY) * 0.005;
         }
 
         function onDocumentTouchMove(event) {
             if (event.touches.length === 1) {
-                mouseX = (event.touches[0].clientX - windowHalfX) * 0.0005;
-                mouseY = (event.touches[0].clientY - windowHalfY) * 0.0005;
+                mouseX = (event.touches[0].clientX - windowHalfX) * 0.005;
+                mouseY = (event.touches[0].clientY - windowHalfY) * 0.005;
             }
         }
 
@@ -629,36 +639,13 @@ MY ALEJ</div>
                 particles.rotation.y += 0.002;
             }
             
-            // Animar textos flotantes
-            floatingTexts.forEach((text, index) => {
-                const time = Date.now() * 0.001;
-                text.userData.angle += text.userData.speed;
-                
-                // Movimiento flotante
-                text.position.y = text.userData.originalPosition.y + Math.sin(time + index) * 3;
-                text.position.x = text.userData.originalPosition.x + Math.cos(time * 0.7 + index) * 2;
-                
-                // Rotación suave
-                text.rotation.y += 0.01;
-                text.rotation.x = Math.sin(time * 0.5 + index) * 0.1;
-                
-                // Efecto de pulso
-                const scale = 1 + Math.sin(time * 2 + index) * 0.1;
-                text.scale.setScalar(scale);
-            });
-            
-            // Movimiento de cámara basado en mouse/touch
-            camera.position.x += (mouseX * 30 - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY * 30 - camera.position.y) * 0.05;
+            // Movimiento de cámara con mouse/touch
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
             camera.lookAt(scene.position);
             
             renderer.render(scene, camera);
         }
-
-        // Precargar recursos
-        window.addEventListener('load', () => {
-            console.log("Página cargada completamente");
-        });
     </script>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

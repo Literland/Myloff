@@ -32,7 +32,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 10; /* Siempre encima del 3D */
+            z-index: 10;
         }
 
         #click-overlay {
@@ -88,7 +88,6 @@
             #click-overlay h1 { font-size: 1.8rem; }
         }
 
-        /* Botón de audio */
         #audio-toggle {
             position: absolute;
             top: 20px;
@@ -107,7 +106,6 @@
 </head>
 <body>
 
-    <!-- El canvas 3D (reemplaza tu canvas 2D) -->
     <div id="three-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
     
     <audio id="myAudio" loop>
@@ -127,10 +125,9 @@
 MY ALEJ</div>
     </div>
 
-    <!-- Cargar Three.js desde CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- TRES.JS: EFECTO 3D ---
+        // --- TRES.JS: EFECTO 3D DINÁMICO CORREGIDO ---
         let scene, camera, renderer, particles;
         let isThreeJsReady = false;
 
@@ -147,18 +144,16 @@ MY ALEJ</div>
             container.innerHTML = '';
             container.appendChild(renderer.domElement);
 
-            // Geometría de partículas (ahora son "corazones" estilizados como partículas rosas)
-            const particlesCount = 1500;
+            const particlesCount = 1800;
             const geometry = new THREE.BufferGeometry();
             const positions = new Float32Array(particlesCount * 3);
             const colors = new Float32Array(particlesCount * 3);
 
             for (let i = 0; i < particlesCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 20;     // x
-                positions[i + 1] = (Math.random() - 0.5) * 20; // y
-                positions[i + 2] = (Math.random() - 0.5) * 20; // z
+                positions[i] = (Math.random() - 0.5) * 50;
+                positions[i + 1] = (Math.random() - 0.5) * 50;
+                positions[i + 2] = (Math.random() - 0.5) * 50;
 
-                // Color rosa suave
                 colors[i] = 1.0;     // r
                 colors[i + 1] = 0.4; // g
                 colors[i + 2] = 0.6; // b
@@ -168,15 +163,15 @@ MY ALEJ</div>
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
             const material = new THREE.PointsMaterial({
-                size: 0.1,
+                size: 0.12,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.8
+                opacity: 0.85
             });
 
             particles = new THREE.Points(geometry, material);
             scene.add(particles);
-            camera.position.z = 5;
+            camera.position.z = 15;
 
             isThreeJsReady = true;
             animate3D();
@@ -185,8 +180,18 @@ MY ALEJ</div>
         function animate3D() {
             if (!isThreeJsReady) return;
             requestAnimationFrame(animate3D);
-            particles.rotation.x += 0.0005;
-            particles.rotation.y += 0.001;
+
+            // Rotación suave de toda la escena
+            scene.rotation.y += 0.0008;
+            scene.rotation.x += 0.0003;
+
+            // Movimiento sutil de partículas (evita que estén estáticas)
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i++) {
+                positions[i] += (Math.random() - 0.5) * 0.02;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+
             renderer.render(scene, camera);
         }
 
@@ -197,7 +202,7 @@ MY ALEJ</div>
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- TU LÓGICA ORIGINAL ---
+        // --- LÓGICA DE USUARIO ---
         const overlay = document.getElementById('click-overlay');
         const messageContent = document.getElementById('message-content');
         const audio = document.getElementById('myAudio');
@@ -207,8 +212,8 @@ MY ALEJ</div>
             audio.play().then(() => {
                 overlay.style.display = 'none';
                 messageContent.style.display = 'flex';
-                initThreeJS(); // Inicia el 3D SOLO después del clic
-            }).catch(e => console.log("Play no permitido:", e));
+                initThreeJS();
+            }).catch(e => console.log("Audio play blocked:", e));
         });
 
         audioToggle.addEventListener('click', () => {
@@ -216,132 +221,11 @@ MY ALEJ</div>
             audioToggle.textContent = audio.muted ? '🔇' : '🔊';
         });
 
-        // Soporte para autoplay en algunos navegadores
         document.body.addEventListener('click', () => {
             if (overlay.style.display !== 'none') {
                 overlay.click();
             }
         });
-    <script>
-    // --- TRES.JS: EFECTO 3D DINÁMICO ---
-    let scene, camera, renderer, particles;
-    let isThreeJsReady = false;
-
-    function initThreeJS() {
-        if (isThreeJsReady) return;
-        
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        
-        const container = document.getElementById('three-container');
-        container.innerHTML = '';
-        container.appendChild(renderer.domElement);
-
-        // Geometría de partículas
-        const particlesCount = 2000;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particlesCount * 3);
-        const colors = new Float32Array(particlesCount * 3);
-        const velocities = new Float32Array(particlesCount * 3); // NUEVO: velocidad de cada partícula
-
-        for (let i = 0; i < particlesCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 40;     // x
-            positions[i + 1] = (Math.random() - 0.5) * 40; // y
-            positions[i + 2] = (Math.random() - 0.5) * 40; // z
-
-            // Color rosa suave
-            colors[i] = 1.0;     // r
-            colors[i + 1] = 0.4; // g
-            colors[i + 2] = 0.6; // b
-
-            // Velocidad aleatoria en 3D
-            velocities[i] = (Math.random() - 0.5) * 0.05;
-            velocities[i + 1] = (Math.random() - 0.5) * 0.05;
-            velocities[i + 2] = (Math.random() - 0.5) * 0.05;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const material = new THREE.PointsMaterial({
-            size: 0.1,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.8
-        });
-
-        particles = new THREE.Points(geometry, material);
-        scene.add(particles);
-        camera.position.z = 10; // Aumentamos la distancia para más profundidad
-
-        isThreeJsReady = true;
-        animate3D();
-    }
-
-    function animate3D() {
-        if (!isThreeJsReady) return;
-        requestAnimationFrame(animate3D);
-
-        // Rotar la escena suavemente
-        scene.rotation.y += 0.001;
-        scene.rotation.x += 0.0005;
-
-        // Actualizar posiciones de partículas
-        const positions = particles.geometry.attributes.position.array;
-        const velocities = particles.geometry.attributes.position.array; // Reutilizamos el array de posiciones como velocidad (simplificado)
-        
-        for (let i = 0; i < positions.length; i += 3) {
-            // Mover partículas con velocidad
-            positions[i] += (Math.random() - 0.5) * 0.005;
-            positions[i + 1] += (Math.random() - 0.5) * 0.005;
-            positions[i + 2] += (Math.random() - 0.5) * 0.005;
-
-            // Si se salen del campo, reaparecen en el centro
-            if (Math.abs(positions[i]) > 30) positions[i] = 0;
-            if (Math.abs(positions[i + 1]) > 30) positions[i + 1] = 0;
-            if (Math.abs(positions[i + 2]) > 30) positions[i + 2] = 0;
-        }
-
-        particles.geometry.attributes.position.needsUpdate = true;
-        renderer.render(scene, camera);
-    }
-
-    window.addEventListener('resize', () => {
-        if (!isThreeJsReady) return;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // --- TU LÓGICA ORIGINAL ---
-    const overlay = document.getElementById('click-overlay');
-    const messageContent = document.getElementById('message-content');
-    const audio = document.getElementById('myAudio');
-    const audioToggle = document.getElementById('audio-toggle');
-
-    overlay.addEventListener('click', () => {
-        audio.play().then(() => {
-            overlay.style.display = 'none';
-            messageContent.style.display = 'flex';
-            initThreeJS(); // Inicia el 3D SOLO después del clic
-        }).catch(e => console.log("Play no permitido:", e));
-    });
-
-    audioToggle.addEventListener('click', () => {
-        audio.muted = !audio.muted;
-        audioToggle.textContent = audio.muted ? '🔇' : '🔊';
-    });
-
-    // Soporte para autoplay en algunos navegadores
-    document.body.addEventListener('click', () => {
-        if (overlay.style.display !== 'none') {
-            overlay.click();
-        }
-    });
-      </script>
+    </script>
 </body>
 </html>
-

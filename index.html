@@ -135,7 +135,7 @@
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
         }
 
-        /* Fotos movibles */
+        /* Fotos movibles - MEJORADO */
         .photo-frame {
             position: absolute;
             width: 160px;
@@ -147,19 +147,22 @@
                 0 10px 25px rgba(0,0,0,0.4),
                 0 0 15px var(--rosa-bebe);
             cursor: grab;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             touch-action: none;
             user-select: none;
             z-index: 10;
+            /* NUEVO: Mejor rendimiento para arrastre */
+            will-change: transform;
         }
 
-        .photo-frame:active {
+        .photo-frame.dragging {
             cursor: grabbing;
             transform: scale(1.08);
             box-shadow: 
                 0 15px 35px rgba(0,0,0,0.6),
                 0 0 25px var(--purple-bts);
             z-index: 100;
+            transition: none; /* Sin transición durante arrastre */
         }
 
         .photo-frame img {
@@ -167,6 +170,7 @@
             height: 100%;
             object-fit: cover;
             border-radius: 10px;
+            pointer-events: none; /* Mejorar arrastre */
         }
 
         /* Elementos decorativos */
@@ -439,7 +443,7 @@
     <!-- Canvas para efectos -->
     <canvas id="particles-canvas"></canvas>
 
-    <!-- Audio -->
+    <!-- Audio - URLs ACTUALIZADAS -->
     <audio id="background-music" loop>
         <source src="https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a" type="audio/mpeg">
     </audio>
@@ -477,22 +481,22 @@
             { 
                 id: 'snow-garden', 
                 name: '❄️ Jardín de Nieve Taekook',
-                music: 'snow-flower'
+                music: 'https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a'
             },
             { 
                 id: 'universe', 
                 name: '🌌 Universo Mikrokosmos',
-                music: 'mikrokosmos'
+                music: 'https://audio.jukehost.co.uk/abc123' // Reemplazar con URL real
             },
             { 
                 id: 'k-drama-home', 
                 name: '🏡 Hogar K-Drama',
-                music: 'heartbeat'
+                music: 'https://audio.jukehost.co.uk/def456' // Reemplazar con URL real
             },
             { 
                 id: 'love-gallery', 
                 name: '💞 Galería del Amor',
-                music: 'best-of-me'
+                music: 'https://audio.jukehost.co.uk/ghi789' // Reemplazar con URL real
             }
         ];
 
@@ -676,12 +680,88 @@
             frame.appendChild(img);
             scene.appendChild(frame);
             
-            makeDraggable(frame);
+            // NUEVO: Sistema de arrastre mejorado
+            setupDragAndDrop(frame);
             
             frame.addEventListener('click', (e) => {
                 e.stopPropagation();
                 showPhotoMessage(photoIndex, frame);
             });
+        }
+
+        // ========== SISTEMA DE ARRASTRE MEJORADO ==========
+        function setupDragAndDrop(element) {
+            let isDragging = false;
+            let startX, startY;
+            let initialX, initialY;
+            
+            element.addEventListener('mousedown', startDrag);
+            element.addEventListener('touchstart', startDrag);
+            
+            function startDrag(e) {
+                isDragging = true;
+                element.classList.add('dragging');
+                
+                // Obtener posición inicial
+                const rect = element.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                
+                // Obtener posición del click/touch
+                if (e.type === 'mousedown') {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                } else {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                }
+                
+                // Agregar event listeners
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('touchmove', drag);
+                document.addEventListener('mouseup', stopDrag);
+                document.addEventListener('touchend', stopDrag);
+                
+                e.preventDefault();
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                let currentX, currentY;
+                
+                if (e.type === 'mousemove') {
+                    currentX = e.clientX;
+                    currentY = e.clientY;
+                } else {
+                    currentX = e.touches[0].clientX;
+                    currentY = e.touches[0].clientY;
+                }
+                
+                // Calcular nueva posición
+                const deltaX = currentX - startX;
+                const deltaY = currentY - startY;
+                
+                const newX = initialX + deltaX;
+                const newY = initialY + deltaY;
+                
+                // Aplicar nueva posición (MUCHO MÁS RÁPIDO)
+                element.style.left = newX + 'px';
+                element.style.top = newY + 'px';
+                
+                e.preventDefault();
+            }
+            
+            function stopDrag() {
+                isDragging = false;
+                element.classList.remove('dragging');
+                
+                // Remover event listeners
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('touchmove', drag);
+                document.removeEventListener('mouseup', stopDrag);
+                document.removeEventListener('touchend', stopDrag);
+            }
         }
 
         function createSceneMessage(scene, text, x, y) {
@@ -693,65 +773,17 @@
             scene.appendChild(message);
         }
 
-        // ========== SISTEMA DE ARRASTRE ==========
-        function makeDraggable(element) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            
-            element.onmousedown = dragMouseDown;
-            element.ontouchstart = dragTouchStart;
-
-            function dragMouseDown(e) {
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-
-            function dragTouchStart(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                pos3 = touch.clientX;
-                pos4 = touch.clientY;
-                document.ontouchend = closeDragElement;
-                document.ontouchmove = elementDragTouch;
-            }
-
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-            }
-
-            function elementDragTouch(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                pos1 = pos3 - touch.clientX;
-                pos2 = pos4 - touch.clientY;
-                pos3 = touch.clientX;
-                pos4 = touch.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                document.ontouchend = null;
-                document.ontouchmove = null;
-            }
-        }
-
         function showPhotoMessage(photoIndex, element) {
             const message = document.createElement('div');
             message.className = 'special-message';
             message.textContent = messages[photoIndex];
-            message.style.left = (element.offsetLeft + 80) + 'px';
-            message.style.top = (element.offsetTop - 40) + 'px';
+            
+            // Posicionar cerca de la foto
+            const rect = element.getBoundingClientRect();
+            message.style.left = (rect.left + rect.width/2) + 'px';
+            message.style.top = (rect.top - 30) + 'px';
+            message.style.transform = 'translateX(-50%)';
+            
             message.style.animation = 'message-float 3s ease-in-out';
             message.style.fontSize = '1.1rem';
             
@@ -872,16 +904,44 @@
             window.addEventListener('resize', resizeCanvas);
         }
 
-        // ========== MÚSICA ==========
+        // ========== MÚSICA MEJORADA ==========
         function playMusic() {
             const audio = document.getElementById('background-music');
-            audio.volume = 0.7;
-            audio.play().then(() => {
-                isMusicPlaying = true;
-                updateMusicIcon();
-            }).catch(error => {
-                console.log('La música requiere interacción del usuario');
-            });
+            audio.volume = 0.6;
+            
+            // Forzar reproducción con user gesture
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isMusicPlaying = true;
+                    updateMusicIcon();
+                    console.log('Música reproduciéndose');
+                }).catch(error => {
+                    console.log('La música requiere interacción del usuario:', error);
+                    // Mostrar instrucción para el usuario
+                    showMusicInstruction();
+                });
+            }
+        }
+
+        function showMusicInstruction() {
+            const instruction = document.createElement('div');
+            instruction.className = 'special-message';
+            instruction.textContent = "🔊 Toca para activar la música";
+            instruction.style.left = '50%';
+            instruction.style.top = '50%';
+            instruction.style.transform = 'translate(-50%, -50%)';
+            instruction.style.fontSize = '1.4rem';
+            instruction.style.zIndex = '300';
+            instruction.style.animation = 'message-float 2s ease-in-out infinite';
+            
+            document.body.appendChild(instruction);
+            
+            // Remover después de 5 segundos
+            setTimeout(() => {
+                instruction.remove();
+            }, 5000);
         }
 
         function toggleMusic() {
@@ -889,7 +949,9 @@
             if (isMusicPlaying) {
                 audio.pause();
             } else {
-                audio.play();
+                audio.play().catch(error => {
+                    console.log('Error al reproducir música:', error);
+                });
             }
             isMusicPlaying = !isMusicPlaying;
             updateMusicIcon();

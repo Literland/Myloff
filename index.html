@@ -476,30 +476,29 @@
     </div>
 
     <script>
-        // ========== CONFIGURACIÓN ==========
-        const scenes = [
-            { 
-                id: 'snow-garden', 
-                name: '❄️ Jardín de Nieve Taekook',
-                music: 'https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a'
-            },
-            { 
-                id: 'universe', 
-                name: '🌌 Universo Mikrokosmos',
-                music: 'https://audio.jukehost.co.uk/abc123' // Reemplazar con URL real
-            },
-            { 
-                id: 'k-drama-home', 
-                name: '🏡 Hogar K-Drama',
-                music: 'https://audio.jukehost.co.uk/def456' // Reemplazar con URL real
-            },
-            { 
-                id: 'love-gallery', 
-                name: '💞 Galería del Amor',
-                music: 'https://audio.jukehost.co.uk/ghi789' // Reemplazar con URL real
-            }
-        ];
-
+        // ========== CONFIGURACIÓN CORREGIDA ==========
+const scenes = [
+    { 
+        id: 'snow-garden', 
+        name: '❄️ Jardín de Nieve Taekook',
+        music: 'https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a' // Snow Flower - V
+    },
+    { 
+        id: 'universe', 
+        name: '🌌 Universo Mikrokosmos',
+        music: 'https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a' // Misma por ahora - NECESITAS URL REAL
+    },
+    { 
+        id: 'k-drama-home', 
+        name: '🏡 Hogar K-Drama',
+        music: 'https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a' // Misma por ahora - NECESITAS URL REAL
+    },
+    { 
+        id: 'love-gallery', 
+        name: '💞 Galería del Amor',
+        music: 'https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a' // Misma por ahora - NECESITAS URL REAL
+    }
+];
         const photos = [
             'https://literland.github.io/mytaekook/14d8c2703f5903579bd3d8e809f7dd39.jpg',
             'https://literland.github.io/mytaekook/17ac5a41c03f28b8ef49f4292390d48d.jpg',
@@ -907,52 +906,83 @@
         // ========== MÚSICA MEJORADA ==========
         function playMusic() {
             const audio = document.getElementById('background-music');
-            audio.volume = 0.6;
+            audio.volume = 0.7;
             
-            // Forzar reproducción con user gesture
+            // Estrategia más agresiva para móviles
             const playPromise = audio.play();
             
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     isMusicPlaying = true;
                     updateMusicIcon();
-                    console.log('Música reproduciéndose');
+                    console.log('🎵 Música activada');
                 }).catch(error => {
-                    console.log('La música requiere interacción del usuario:', error);
-                    // Mostrar instrucción para el usuario
-                    showMusicInstruction();
+                    console.log('🔇Música bloqueada, necesita interacción');
+                    // En móvil, a veces necesita un tap explícito
+                    enableAudioOnInteraction();
                 });
             }
         }
 
-        function showMusicInstruction() {
-            const instruction = document.createElement('div');
-            instruction.className = 'special-message';
-            instruction.textContent = "🔊 Toca para activar la música";
-            instruction.style.left = '50%';
-            instruction.style.top = '50%';
-            instruction.style.transform = 'translate(-50%, -50%)';
-            instruction.style.fontSize = '1.4rem';
-            instruction.style.zIndex = '300';
-            instruction.style.animation = 'message-float 2s ease-in-out infinite';
-            
-            document.body.appendChild(instruction);
-            
-            // Remover después de 5 segundos
-            setTimeout(() => {
-                instruction.remove();
-            }, 5000);
-        }
+        function enableAudioOnInteraction() {
+            // Crear overlay para forzar interacción
+            const audioOverlay = document.createElement('div');
+    audioOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        color: white;
+        font-family: 'Mali', cursive;
+        text-align: center;
+        padding: 20px;
+    `;
+    
+    audioOverlay.innerHTML = `
+        <div style="font-size: 2rem; margin-bottom: 20px;">🎵</div>
+        <div style="font-size: 1.3rem; margin-bottom: 10px;">Toca para activar la música</div>
+        <div style="font-size: 1rem; color: var(--lila-pastel); margin-bottom: 30px;">
+            Algunos navegadores necesitan tu permiso para reproducir música
+        </div>
+        <button onclick="activateAudio()" style="
+            background: linear-gradient(45deg, var(--purple-bts), var(--rosa-neon));
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1rem;
+            font-family: 'Mali', cursive;
+            cursor: pointer;
+        ">
+            Activar Música Taekook
+        </button>
+    `;
+    
+    document.body.appendChild(audioOverlay);
+}
 
-        function toggleMusic() {
-            const audio = document.getElementById('background-music');
-            if (isMusicPlaying) {
-                audio.pause();
-            } else {
-                audio.play().catch(error => {
-                    console.log('Error al reproducir música:', error);
-                });
+function activateAudio() {
+    const audio = document.getElementById('background-music');
+    audio.play().then(() => {
+        isMusicPlaying = true;
+        updateMusicIcon();
+        // Remover overlay
+        document.querySelectorAll('div').forEach(div => {
+            if (div.style.background === 'rgba(0, 0, 0, 0.8)') {
+                div.remove();
             }
+        });
+    }).catch(error => {
+        console.log('Error final:', error);
+    });
+}
             isMusicPlaying = !isMusicPlaying;
             updateMusicIcon();
         }

@@ -149,13 +149,14 @@
             touch-action: none;
             user-select: none;
             z-index: 10;
+            transform: translate(-50%, -50%);
         }
 
         .photo-frame.dragging {
             cursor: grabbing;
-            transform: scale(1.08);
+            transform: translate(-50%, -50%) scale(1.08);
             box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 25px var(--purple-bts);
-            z-index: 100;
+            z-index: 1000;
             transition: none;
         }
 
@@ -310,19 +311,24 @@
         /* Botón de activación de música */
         #music-activation-btn {
             position: fixed;
-            bottom: 80px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(45deg, var(--purple-bts), var(--rosa-neon));
             border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
+            padding: 15px 30px;
+            border-radius: 30px;
             color: white;
             font-family: 'Mali', cursive;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            max-width: 90vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Animaciones */
@@ -453,29 +459,29 @@
     </div>
 
     <script>
-        // ========== CONFIGURACIÓN AUDIOS ==========
+        // ========== CONFIGURACIÓN ==========
         const scenes = [
-    { 
-        id: 'snow-garden', 
-        name: '❄️ Jardín de Nieve Taekook',
-        music: 'https://tu-usuario.github.io/tu-repositorio/musica/snow-garden.mp3'
-    },
-    { 
-        id: 'universe', 
-        name: '🌌 Universo Mikrokosmos', 
-        music: 'https://tu-usuario.github.io/tu-repositorio/musica/universe.mp3'
-    },
-    { 
-        id: 'k-drama-home', 
-        name: '🏡 Hogar K-Drama',
-        music: 'https://tu-usuario.github.io/tu-repositorio/musica/k-drama.mp3'
-    },
-    { 
-        id: 'love-gallery', 
-        name: '💞 Galería del Amor',
-        music: 'https://tu-usuario.github.io/tu-repositorio/musica/love-gallery.mp3'
-    }
-];
+            { 
+                id: 'snow-garden', 
+                name: '❄️ Jardín de Nieve Taekook',
+                music: 'https://tu-usuario.github.io/tu-repositorio/musica/snow-garden.mp3'
+            },
+            { 
+                id: 'universe', 
+                name: '🌌 Universo Mikrokosmos',
+                music: 'https://tu-usuario.github.io/tu-repositorio/musica/universe.mp3'
+            },
+            { 
+                id: 'k-drama-home', 
+                name: '🏡 Hogar K-Drama',
+                music: 'https://tu-usuario.github.io/tu-repositorio/musica/k-drama.mp3'
+            },
+            { 
+                id: 'love-gallery', 
+                name: '💞 Galería del Amor',
+                music: 'https://tu-usuario.github.io/tu-repositorio/musica/love-gallery.mp3'
+            }
+        ];
 
         const photos = [
             'https://literland.github.io/mytaekook/14d8c2703f5903579bd3d8e809f7dd39.jpg',
@@ -519,6 +525,7 @@
             createFloatingHearts();
             createBTSElements();
             createSpecialMessages();
+            updateMusicIcon();
         }
 
         function startExperience() {
@@ -529,27 +536,26 @@
             document.getElementById('experience-container').style.display = 'block';
             
             loadScene(0);
-            playMusic();
         }
 
         // ========== SISTEMA DE ESCENAS ==========
         function loadScene(index) {
-    currentSceneIndex = index;
-    const scene = scenes[index];
-    
-    document.querySelectorAll('.scene').forEach(scene => {
-        scene.classList.remove('active');
-    });
-    
-    document.getElementById(scene.id).classList.add('active');
-    document.getElementById('scene-indicator').textContent = scene.name;
-    
-    loadSceneContent(scene.id);
-    document.getElementById('scene-menu').style.display = 'none';
-    
-    // Reproducir música de la escena actual
-    playSceneMusic(index);
-}
+            currentSceneIndex = index;
+            const scene = scenes[index];
+            
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.remove('active');
+            });
+            
+            document.getElementById(scene.id).classList.add('active');
+            document.getElementById('scene-indicator').textContent = scene.name;
+            
+            loadSceneContent(scene.id);
+            document.getElementById('scene-menu').style.display = 'none';
+            
+            // Reproducir música de la escena actual
+            playSceneMusic(index);
+        }
 
         function loadSceneContent(sceneId) {
             const scene = document.getElementById(sceneId);
@@ -652,86 +658,98 @@
         }
 
         // ========== SISTEMA DE ARRASTRE ==========
-        unction setupDragAndDrop(element) {
-    let isDragging = false;
-    let startX, startY;
-    let initialX, initialY;
-    
-    element.addEventListener('mousedown', startDrag);
-    element.addEventListener('touchstart', startDrag, { passive: false });
-    
-    function startDrag(e) {
-        isDragging = true;
-        element.classList.add('dragging');
-        
-        // Obtener posición actual en píxeles
-        const rect = element.getBoundingClientRect();
-        initialX = rect.left;
-        initialY = rect.top;
-        
-        if (e.type === 'mousedown') {
-            startX = e.clientX;
-            startY = e.clientY;
-        } else {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            e.preventDefault();
+        function setupDragAndDrop(element) {
+            let isDragging = false;
+            let startX, startY;
+            let initialX, initialY;
+            
+            element.addEventListener('mousedown', startDrag);
+            element.addEventListener('touchstart', startDrag, { passive: false });
+            
+            function startDrag(e) {
+                isDragging = true;
+                element.classList.add('dragging');
+                
+                // Obtener posición actual
+                const rect = element.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                
+                if (e.type === 'mousedown') {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                } else {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    e.preventDefault();
+                }
+                
+                // Guardar posición original
+                element.dataset.originalX = element.style.left;
+                element.dataset.originalY = element.style.top;
+                
+                // Cambiar a posición fija para arrastre
+                element.style.left = initialX + 'px';
+                element.style.top = initialY + 'px';
+                element.style.position = 'fixed';
+                element.style.zIndex = '1000';
+                element.style.transform = 'none';
+                
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('touchmove', drag, { passive: false });
+                document.addEventListener('mouseup', stopDrag);
+                document.addEventListener('touchend', stopDrag);
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                let currentX, currentY;
+                
+                if (e.type === 'mousemove') {
+                    currentX = e.clientX;
+                    currentY = e.clientY;
+                } else {
+                    currentX = e.touches[0].clientX;
+                    currentY = e.touches[0].clientY;
+                    e.preventDefault();
+                }
+                
+                const deltaX = currentX - startX;
+                const deltaY = currentY - startY;
+                
+                element.style.left = (initialX + deltaX) + 'px';
+                element.style.top = (initialY + deltaY) + 'px';
+            }
+            
+            function stopDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                element.classList.remove('dragging');
+                
+                // Convertir posición actual a porcentajes relativos a la escena
+                const rect = element.getBoundingClientRect();
+                const scene = element.parentElement;
+                const sceneRect = scene.getBoundingClientRect();
+                
+                // Calcular porcentajes relativos a la escena
+                const percentX = ((rect.left + rect.width/2 - sceneRect.left) / sceneRect.width) * 100;
+                const percentY = ((rect.top + rect.height/2 - sceneRect.top) / sceneRect.height) * 100;
+                
+                // Aplicar nueva posición
+                element.style.left = Math.max(5, Math.min(95, percentX)) + '%';
+                element.style.top = Math.max(5, Math.min(95, percentY)) + '%';
+                element.style.position = 'absolute';
+                element.style.zIndex = '10';
+                element.style.transform = 'translate(-50%, -50%)';
+                
+                // Limpiar event listeners
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('touchmove', drag);
+                document.removeEventListener('mouseup', stopDrag);
+                document.removeEventListener('touchend', stopDrag);
+            }
         }
-        
-        // Cambiar a posición absoluta en píxeles para un arrastre suave
-        element.style.left = initialX + 'px';
-        element.style.top = initialY + 'px';
-        element.style.position = 'fixed';
-        
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('touchmove', drag, { passive: false });
-        document.addEventListener('mouseup', stopDrag);
-        document.addEventListener('touchend', stopDrag);
-    }
-    
-    function drag(e) {
-        if (!isDragging) return;
-        
-        let currentX, currentY;
-        
-        if (e.type === 'mousemove') {
-            currentX = e.clientX;
-            currentY = e.clientY;
-        } else {
-            currentX = e.touches[0].clientX;
-            currentY = e.touches[0].clientY;
-            e.preventDefault();
-        }
-        
-        const deltaX = currentX - startX;
-        const deltaY = currentY - startY;
-        
-        element.style.left = (initialX + deltaX) + 'px';
-        element.style.top = (initialY + deltaY) + 'px';
-    }
-    
-    function stopDrag() {
-        if (!isDragging) return;
-        isDragging = false;
-        element.classList.remove('dragging');
-        
-        // Convertir de vuelta a posición relativa para mantener en la escena
-        const rect = element.getBoundingClientRect();
-        const sceneRect = element.parentElement.getBoundingClientRect();
-        
-        const relativeX = ((rect.left - sceneRect.left) / sceneRect.width) * 100;
-        const relativeY = ((rect.top - sceneRect.top) / sceneRect.height) * 100;
-        
-        element.style.left = relativeX + '%';
-        element.style.top = relativeY + '%';
-        element.style.position = 'absolute';
-        
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('touchmove', drag);
-        document.removeEventListener('mouseup', stopDrag);
-        document.removeEventListener('touchend', stopDrag);
-    }
-}
 
         function createSceneMessage(scene, text, x, y) {
             const message = document.createElement('div');
@@ -780,110 +798,105 @@
         }
 
         // ========== SISTEMA DE MÚSICA POR ESCENA ==========
-function playSceneMusic(sceneIndex) {
-    // Detener música actual si existe
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-    }
-    
-    const scene = scenes[sceneIndex];
-    if (!scene.music) return;
-    
-    // Crear nuevo elemento de audio para esta escena
-    currentAudio = new Audio(scene.music);
-    currentAudio.volume = 0.5;
-    currentAudio.loop = true;
-    
-    const playPromise = currentAudio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            isMusicPlaying = true;
-            updateMusicIcon();
-            console.log(`Música de ${scene.name} reproducida`);
-        }).catch(error => {
-            console.log(`Autoplay bloqueado para ${scene.name}`);
-            createMusicActivationButton(sceneIndex);
-        });
-    }
-}
-
-function createMusicActivationButton(sceneIndex) {
-    if (document.getElementById('music-activation-btn')) return;
-    
-    const scene = scenes[sceneIndex];
-    const btn = document.createElement('button');
-    btn.id = 'music-activation-btn';
-    btn.innerHTML = `🎵 Activar Música: ${scene.name}`;
-    btn.style.cssText = `
-        position: fixed;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(45deg, var(--purple-bts), var(--rosa-neon));
-        border: none;
-        padding: 15px 30px;
-        border-radius: 30px;
-        color: white;
-        font-family: 'Mali', cursive;
-        font-size: 1.1rem;
-        cursor: pointer;
-        z-index: 1000;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-        transition: all 0.3s ease;
-        white-space: nowrap;
-        max-width: 90vw;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    `;
-    
-    btn.onclick = function() {
-        if (currentAudio) {
-            currentAudio.play().then(() => {
-                isMusicPlaying = true;
-                updateMusicIcon();
-                btn.style.transform = 'translateX(-50%) scale(0.9)';
-                setTimeout(() => btn.remove(), 300);
-            }).catch(err => {
-                console.error('Error al reproducir música:', err);
-                btn.innerHTML = '❌ Error - Click para intentar';
-            });
+        function playSceneMusic(sceneIndex) {
+            // Detener música actual si existe
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            
+            const scene = scenes[sceneIndex];
+            if (!scene.music) return;
+            
+            // Crear nuevo elemento de audio para esta escena
+            currentAudio = new Audio(scene.music);
+            currentAudio.volume = 0.5;
+            currentAudio.loop = true;
+            
+            const playPromise = currentAudio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isMusicPlaying = true;
+                    updateMusicIcon();
+                }).catch(error => {
+                    createMusicActivationButton(sceneIndex);
+                });
+            }
         }
-    };
-    
-    document.body.appendChild(btn);
-    
-    // Auto-remover después de 10 segundos
-    setTimeout(() => {
-        if (btn.parentNode) btn.remove();
-    }, 10000);
-}
 
-function toggleMusic() {
-    if (!currentAudio) return;
-    
-    if (isMusicPlaying) {
-        currentAudio.pause();
-        isMusicPlaying = false;
-    } else {
-        currentAudio.play().then(() => {
-            isMusicPlaying = true;
-        }).catch(error => {
-            createMusicActivationButton(currentSceneIndex);
-        });
-    }
-    updateMusicIcon();
-}
+        function createMusicActivationButton(sceneIndex) {
+            if (document.getElementById('music-activation-btn')) return;
+            
+            const scene = scenes[sceneIndex];
+            const btn = document.createElement('button');
+            btn.id = 'music-activation-btn';
+            btn.innerHTML = `🎵 Activar Música: ${scene.name}`;
+            btn.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(45deg, var(--purple-bts), var(--rosa-neon));
+                border: none;
+                padding: 15px 30px;
+                border-radius: 30px;
+                color: white;
+                font-family: 'Mali', cursive;
+                font-size: 1.1rem;
+                cursor: pointer;
+                z-index: 1000;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+                transition: all 0.3s ease;
+                white-space: nowrap;
+                max-width: 90vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            `;
+            
+            btn.onclick = function() {
+                if (currentAudio) {
+                    currentAudio.play().then(() => {
+                        isMusicPlaying = true;
+                        updateMusicIcon();
+                        btn.style.transform = 'translateX(-50%) scale(0.9)';
+                        setTimeout(() => btn.remove(), 300);
+                    }).catch(err => {
+                        btn.innerHTML = '❌ Error - Click para intentar';
+                    });
+                }
+            };
+            
+            document.body.appendChild(btn);
+            
+            // Auto-remover después de 10 segundos
+            setTimeout(() => {
+                if (btn.parentNode) btn.remove();
+            }, 10000);
+        }
 
-function stopMusic() {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-    }
-    isMusicPlaying = false;
-    updateMusicIcon();
-}
+        function toggleMusic() {
+            if (!currentAudio) return;
+            
+            if (isMusicPlaying) {
+                currentAudio.pause();
+                isMusicPlaying = false;
+            } else {
+                currentAudio.play().then(() => {
+                    isMusicPlaying = true;
+                }).catch(error => {
+                    createMusicActivationButton(currentSceneIndex);
+                });
+            }
+            updateMusicIcon();
+        }
+
+        function updateMusicIcon() {
+            const icon = document.getElementById('music-icon');
+            if (icon) {
+                icon.className = isMusicPlaying ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+            }
+        }
 
         // ========== EFECTOS VISUALES ==========
         function createSnowflakes() {

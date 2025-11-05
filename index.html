@@ -81,6 +81,8 @@
         /* Mundo 3D */
         #world-container {
             position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             perspective: 1500px;
@@ -97,6 +99,8 @@
         /* Escenas */
         .scene {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
@@ -107,61 +111,74 @@
             display: block;
         }
 
-        /* Escena 1: Jardín de Nieve */
+        /* Escena 1: Jardín de Nieve - FONDO OSCURO PARA VER NIEVE */
         #snow-garden {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #2a2a6a 100%);
         }
 
-        /* Escena 2: Universo */
+        /* Escena 2: Universo - FONDO ESPACIAL */
         #universe {
-            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            background: linear-gradient(135deg, #000011 0%, #000033 50%, #000055 100%);
         }
 
-        /* Elementos 3D */
+        /* Elementos 3D - AHORA SON MOVIBLES */
         .photo-frame {
             position: absolute;
-            width: 200px;
-            height: 250px;
+            width: 180px;
+            height: 220px;
             background: white;
-            border-radius: 15px;
+            border: 8px solid var(--lila-pastel);
+            border-radius: 20px;
             transform-style: preserve-3d;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            cursor: pointer;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.5),
+                0 0 20px var(--rosa-bebe);
+            cursor: grab;
             transition: all 0.3s ease;
+            touch-action: none;
+            user-select: none;
         }
 
-        .photo-frame:hover {
-            transform: scale(1.05) rotateY(5deg);
+        .photo-frame:active {
+            cursor: grabbing;
+            transform: scale(1.1) rotateZ(5deg);
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.6),
+                0 0 30px var(--purple-bts);
         }
 
         .photo-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 12px;
         }
 
-        /* Nieve */
+        /* NIEVE VISIBLE - COLOR BLANCO SOBRE FONDO OSCURO */
         .snowflake {
             position: absolute;
             background: white;
             border-radius: 50%;
-            opacity: 0.8;
+            opacity: 0.9;
             animation: fall linear infinite;
+            pointer-events: none;
+            z-index: 5;
         }
 
-        /* Estrellas */
+        /* ESTRELLAS VISIBLES */
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
             animation: twinkle 3s infinite;
+            pointer-events: none;
+            z-index: 5;
         }
 
         /* Botones de navegación */
         .nav-button {
             position: fixed;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.3);
             border: 2px solid var(--lila-pastel);
             border-radius: 50%;
             width: 50px;
@@ -177,7 +194,7 @@
         }
 
         .nav-button:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.5);
             transform: scale(1.1);
         }
 
@@ -186,7 +203,7 @@
         .nav-audio { 
             top: 20px; 
             right: 20px; 
-            background: rgba(138, 43, 226, 0.3);
+            background: rgba(138, 43, 226, 0.4);
             border-color: var(--purple-bts);
         }
 
@@ -210,7 +227,7 @@
 
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+            50% { opacity: 1; transform: scale(1.5); }
         }
 
         @keyframes float {
@@ -221,12 +238,28 @@
         /* Mensajes flotantes */
         .floating-message {
             position: absolute;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: var(--rosa-bebe);
-            text-shadow: 0 0 10px currentColor;
+            text-shadow: 0 0 15px currentColor;
             animation: float 4s ease-in-out infinite;
             pointer-events: none;
-            z-index: 10;
+            z-index: 20;
+            font-weight: 600;
+        }
+
+        /* Indicador de escena */
+        .scene-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            z-index: 90;
+            font-size: 0.9rem;
         }
 
         /* Responsive */
@@ -234,12 +267,13 @@
             .nav-button {
                 width: 45px;
                 height: 45px;
+                font-size: 0.9rem;
             }
             .nav-prev { left: 10px; }
             .nav-next { right: 10px; }
             .photo-frame {
-                width: 150px;
-                height: 200px;
+                width: 140px;
+                height: 180px;
             }
         }
     </style>
@@ -248,7 +282,7 @@
     <!-- Pantalla de carga -->
     <div id="loading-screen">
         <div class="loading-content">
-            <h1>💜 Creando Nuestro Universo 💜</h1>
+            <h1>💜 Nuestro Universo Taekook 💜</h1>
             <p>Preparando algo mágico para ti...</p>
             <p>mi princesa ALEJ 💕</p>
             <div class="loading-spinner"></div>
@@ -262,7 +296,7 @@
     <div id="world-container">
         <div class="world" id="world">
             <!-- Escena 1: Jardín de Nieve Taekook -->
-            <div id="snow-garden" class="scene">
+            <div id="snow-garden" class="scene active">
                 <!-- Fotos se agregarán dinámicamente -->
             </div>
 
@@ -273,13 +307,10 @@
         </div>
     </div>
 
-    <!-- Canvas para efectos de partículas -->
-    <canvas id="particles-canvas"></canvas>
-
-    <!-- Audio -->
-    <audio id="background-music" loop>
-        <!-- La música se configurará después -->
-    </audio>
+    <!-- Indicador de escena -->
+    <div class="scene-indicator" id="scene-indicator">
+        Jardín de Nieve Taekook
+    </div>
 
     <!-- Botones de navegación -->
     <button class="nav-button nav-audio" onclick="toggleMusic()">
@@ -319,13 +350,14 @@
         let currentSceneIndex = 0;
         let isMusicPlaying = false;
         let isExperienceLoaded = false;
+        let draggedElement = null;
+        let dragOffset = { x: 0, y: 0 };
 
         // ========== INICIALIZACIÓN ==========
         function init() {
             createSnowflakes();
             createStars();
             createFloatingMessages();
-            initParticles();
             loadScene(0);
             
             // Simular carga
@@ -336,13 +368,13 @@
                     document.getElementById('world-container').style.display = 'block';
                     isExperienceLoaded = true;
                 }, 1000);
-            }, 3000);
+            }, 2000);
         }
 
         // ========== SISTEMA DE ESCENAS ==========
         function loadScene(index) {
             currentSceneIndex = index;
-            const sceneId = scenes[index].id;
+            const scene = scenes[index];
             
             // Ocultar todas las escenas
             document.querySelectorAll('.scene').forEach(scene => {
@@ -350,14 +382,18 @@
             });
             
             // Mostrar escena actual
-            document.getElementById(sceneId).classList.add('active');
+            document.getElementById(scene.id).classList.add('active');
             
-            // Cargar contenido específico de la escena
-            loadSceneContent(sceneId);
+            // Actualizar indicador
+            document.getElementById('scene-indicator').textContent = scene.name;
+            
+            // Cargar contenido específico
+            loadSceneContent(scene.id);
         }
 
         function loadSceneContent(sceneId) {
             const scene = document.getElementById(sceneId);
+            scene.innerHTML = '';
             
             switch(sceneId) {
                 case 'snow-garden':
@@ -370,83 +406,139 @@
         }
 
         function loadSnowGarden(scene) {
-            // Limpiar escena
-            scene.innerHTML = '';
-            
-            // Agregar 6 fotos en posiciones 3D
+            // Agregar 6 fotos en posiciones aleatorias
             for (let i = 0; i < 6; i++) {
-                const frame = document.createElement('div');
-                frame.className = 'photo-frame';
-                frame.style.transform = `
-                    translateX(${Math.random() * 100 - 50}vw)
-                    translateY(${Math.random() * 100 - 50}vh)
-                    translateZ(${Math.random() * 200 - 100}px)
-                    rotateY(${Math.random() * 360}deg)
-                `;
-                
-                const img = document.createElement('img');
-                img.src = photos[i];
-                img.alt = `Nuestra foto ${i + 1}`;
-                img.onload = () => {
-                    frame.style.opacity = '1';
-                };
-                
-                frame.appendChild(img);
-                scene.appendChild(frame);
-                
-                // Efecto al hacer click
-                frame.addEventListener('click', () => {
-                    showPhotoMessage(i);
+                createDraggablePhoto(scene, i, {
+                    x: Math.random() * 60 + 20,
+                    y: Math.random() * 60 + 20,
+                    z: Math.random() * 200 - 100
                 });
             }
         }
 
         function loadUniverse(scene) {
-            // Limpiar escena
-            scene.innerHTML = '';
-            
-            // Agregar fotos como planetas
+            // Agregar fotos como planetas en órbita
             for (let i = 6; i < Math.min(12, photos.length); i++) {
-                const planet = document.createElement('div');
-                planet.className = 'photo-frame';
-                planet.style.transform = `
-                    translateX(${Math.cos(i * 0.5) * 30}vw)
-                    translateY(${Math.sin(i * 0.5) * 20}vh)
-                    translateZ(${i * 20}px)
-                    rotateY(${i * 30}deg)
-                `;
-                planet.style.animation = `float ${8 + i * 2}s ease-in-out infinite`;
-                
-                const img = document.createElement('img');
-                img.src = photos[i];
-                img.alt = `Nuestra foto ${i + 1}`;
-                
-                planet.appendChild(img);
-                scene.appendChild(planet);
+                createDraggablePhoto(scene, i, {
+                    x: 50 + Math.cos(i * 0.8) * 30,
+                    y: 50 + Math.sin(i * 0.8) * 20,
+                    z: i * 25
+                });
             }
         }
 
-        function showPhotoMessage(photoIndex) {
+        function createDraggablePhoto(scene, photoIndex, position) {
+            const frame = document.createElement('div');
+            frame.className = 'photo-frame';
+            frame.style.left = position.x + '%';
+            frame.style.top = position.y + '%';
+            frame.style.transform = `translateZ(${position.z}px) rotateY(${Math.random() * 360}deg)`;
+            frame.dataset.photoIndex = photoIndex;
+            
+            const img = document.createElement('img');
+            img.src = photos[photoIndex];
+            img.alt = `Nuestra foto ${photoIndex + 1}`;
+            img.draggable = false;
+            
+            frame.appendChild(img);
+            scene.appendChild(frame);
+            
+            // Hacer la foto arrastrable
+            makeDraggable(frame);
+            
+            // Efecto al hacer click/touch
+            frame.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showPhotoMessage(photoIndex, frame);
+            });
+        }
+
+        // ========== SISTEMA DE ARRASTRE ==========
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            element.ontouchstart = dragTouchStart;
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                element.style.cursor = 'grabbing';
+            }
+
+            function dragTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = elementDragTouch;
+                element.style.cursor = 'grabbing';
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+
+            function elementDragTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                pos1 = pos3 - touch.clientX;
+                pos2 = pos4 - touch.clientY;
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+                element.style.cursor = 'grab';
+            }
+        }
+
+        function showPhotoMessage(photoIndex, element) {
             const messages = [
-                "💖 Eres mi todo",
-                "💜 Team Taekook forever",
-                "🌸 Nuestro amor brilla",
-                "✨ Eres mi estrella",
-                "🐻🐰 TaeKook soulmates",
-                "❄️ Nieve y amor eterno"
+                "💖 Eres mi todo mi amor",
+                "💜 Team Taekook por siempre",
+                "🌸 Nuestro amor es eterno", 
+                "✨ Eres mi estrella favorita",
+                "🐻🐰 TaeKook soulmates forever",
+                "❄️ Nieve y amor infinito",
+                "🌟 Nuestro mikrokosmos",
+                "💕 Eres mi razón de ser",
+                "🦋 Vuelas en mi corazón",
+                "🎶 Nuestra canción favorita",
+                "🏡 Nuestro hogar eres tú",
+                "💘 Te amo más cada día"
             ];
             
             const message = document.createElement('div');
             message.className = 'floating-message';
-            message.textContent = messages[photoIndex % messages.length];
-            message.style.left = Math.random() * 80 + 10 + '%';
-            message.style.top = Math.random() * 80 + 10 + '%';
+            message.textContent = messages[photoIndex];
+            message.style.left = (element.offsetLeft + 90) + 'px';
+            message.style.top = (element.offsetTop - 30) + 'px';
             
             document.body.appendChild(message);
             
             setTimeout(() => {
-                message.remove();
-            }, 3000);
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 1000);
+            }, 2000);
         }
 
         function nextScene() {
@@ -464,120 +556,33 @@
         // ========== EFECTOS VISUALES ==========
         function createSnowflakes() {
             const container = document.body;
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < 100; i++) {
                 const snowflake = document.createElement('div');
                 snowflake.className = 'snowflake';
                 snowflake.style.left = Math.random() * 100 + 'vw';
-                snowflake.style.width = Math.random() * 4 + 2 + 'px';
+                snowflake.style.width = Math.random() * 5 + 2 + 'px';
                 snowflake.style.height = snowflake.style.width;
-                snowflake.style.animationDuration = Math.random() * 4 + 3 + 's';
-                snowflake.style.animationDelay = Math.random() * 5 + 's';
-                snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+                snowflake.style.animationDuration = Math.random() * 5 + 3 + 's';
+                snowflake.style.animationDelay = Math.random() * 10 + 's';
+                snowflake.style.opacity = Math.random() * 0.8 + 0.2;
                 container.appendChild(snowflake);
             }
         }
 
         function createStars() {
-            const universe = document.getElementById('universe');
-            for (let i = 0; i < 200; i++) {
+            const container = document.body;
+            for (let i = 0; i < 150; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + 'vw';
                 star.style.top = Math.random() * 100 + 'vh';
-                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.width = Math.random() * 3 + 1 + 'px';
                 star.style.height = star.style.width;
-                star.style.animationDelay = Math.random() * 3 + 's';
-                star.style.opacity = Math.random() * 0.5 + 0.2;
-                universe.appendChild(star);
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+                container.appendChild(star);
             }
         }
 
         function createFloatingMessages() {
-            const messages = ["TE AMO", "TEAM TAEKOOK", "FOREVER", "MY LOVE", "SOULMATES"];
-            for (let i = 0; i < 15; i++) {
-                const message = document.createElement('div');
-                message.className = 'floating-message';
-                message.textContent = messages[Math.floor(Math.random() * messages.length)];
-                message.style.left = Math.random() * 100 + 'vw';
-                message.style.top = Math.random() * 100 + 'vh';
-                message.style.animationDelay = Math.random() * 5 + 's';
-                message.style.fontSize = (Math.random() * 0.8 + 1) + 'rem';
-                document.body.appendChild(message);
-            }
-        }
-
-        function initParticles() {
-            const canvas = document.getElementById('particles-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-        }
-
-        // ========== CONTROL 360° ==========
-        let isDragging = false;
-        let startX, startY;
-        let rotationY = 0, rotationX = 0;
-
-        document.addEventListener('mousedown', startDrag);
-        document.addEventListener('touchstart', startDrag);
-
-        function startDrag(e) {
-            if (!isExperienceLoaded) return;
-            
-            isDragging = true;
-            startX = e.clientX || e.touches[0].clientX;
-            startY = e.clientY || e.touches[0].clientY;
-        }
-
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('touchmove', drag);
-
-        function drag(e) {
-            if (!isDragging || !isExperienceLoaded) return;
-            
-            const currentX = e.clientX || e.touches[0].clientX;
-            const currentY = e.clientY || e.touches[0].clientY;
-            
-            const deltaX = currentX - startX;
-            const deltaY = currentY - startY;
-            
-            rotationY += deltaX * 0.3;
-            rotationX += deltaY * 0.2;
-            
-            document.getElementById('world').style.transform = 
-                `rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
-            
-            startX = currentX;
-            startY = currentY;
-        }
-
-        document.addEventListener('mouseup', endDrag);
-        document.addEventListener('touchend', endDrag);
-
-        function endDrag() {
-            isDragging = false;
-        }
-
-        // ========== MÚSICA ==========
-        function toggleMusic() {
-            // Por implementar
-            const icon = document.getElementById('music-icon');
-            if (isMusicPlaying) {
-                icon.className = 'fas fa-volume-mute';
-            } else {
-                icon.className = 'fas fa-volume-up';
-            }
-            isMusicPlaying = !isMusicPlaying;
-        }
-
-        // ========== INICIAR ==========
-        window.addEventListener('load', init);
-    </script>
-</body>
-</html>
+            const messages = ["TE AMO", 

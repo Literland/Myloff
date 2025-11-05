@@ -718,9 +718,9 @@
             'https://literland.github.io/mytaekook/image.jpg',
             'https://literland.github.io/mytaekook/images%20(1).jpeg',
             'https://literland.github.io/mytaekook/images.jpeg',
-            'https://github.com/Literland/mytaekook/blob/main/flores.png',
-            'https://github.com/Literland/mytaekook/blob/main/demanos.png',
-            'https://github.com/Literland/mytaekook/blob/main/casados.png'
+            'https://raw.githubusercontent.com/Literland/mytaekook/main/flores.png',
+    'https://raw.githubusercontent.com/Literland/mytaekook/main/demanos.png',
+    'https://raw.githubusercontent.com/Literland/mytaekook/main/casados.png'
         ];
 
         const messages = [
@@ -769,6 +769,8 @@
 
         // ========== SISTEMA DE ESCENAS MEJORADO ==========
         function loadScene(index) {
+            // Limpiar partículas de corazones de la escena anterior
+    cleanupParticles();
             // Efecto de transición
             const transition = document.getElementById('scene-transition');
             transition.classList.add('active');
@@ -885,6 +887,13 @@
             img.src = photos[photoIndex];
             img.alt = `Nuestra foto ${photoIndex + 1}`;
             img.draggable = false;
+
+            // Manejar errores de carga
+    img.onerror = function() {
+        console.error('Error cargando imagen:', photos[photoIndex]);
+        // Crear placeholder en caso de error
+        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhjYmU0Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlbiBubyBlbmNvbnRyYWRhPC90ZXh0Pjwvc3ZnPg==';
+    };
             
             frame.appendChild(img);
             scene.appendChild(frame);
@@ -940,6 +949,16 @@
             
             element.addEventListener('mousedown', startDrag);
             element.addEventListener('touchstart', startDrag, { passive: false });
+
+// ========== LIMPIEZA DE PARTÍCULAS ==========
+function cleanupParticles() {
+    const particles = document.querySelectorAll('.heart-particle');
+    particles.forEach(particle => {
+        if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+        }
+    });
+}
             
             function startDrag(e) {
                 isDragging = true;
@@ -1230,6 +1249,15 @@ function toggle3DMode() {
         // Desactivar modo 3D
         currentScene.classList.remove('scene-3d', 'scene-3d-active');
         remove3DEnvironment(currentScene);
+
+        function cleanupParticles() {
+    const particles = document.querySelectorAll('.heart-particle');
+    particles.forEach(particle => {
+        if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+        }
+    });
+}
         
         // Restaurar botón
         const btn3D = document.querySelector('.nav-3d');
@@ -1348,7 +1376,10 @@ function create3DPhotos(scene) {
         img.draggable = false;
         
         frame.appendChild(img);
-        parallaxContainer.appendChild(frame);
+        const container = document.getElementById('parallax-container');
+        if (container) {
+            container.appendChild(frame);
+        }
         
         setup3DDragAndDrop(frame);
     }

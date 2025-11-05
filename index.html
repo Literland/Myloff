@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Para Mi Princesa - Nuestro Universo</title>
+    <title>Para Mi Princesa ALEJ - Nuestro Universo Taekook</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
             --lavanda: #E6E6FA;
             --azul-cielo: #87CEEB;
             --purple-bts: #8A2BE2;
+            --rosa-neon: #ff6b9d;
         }
 
         body, html {
@@ -37,63 +38,66 @@
             touch-action: manipulation;
         }
 
-        /* Pantalla de carga */
-        #loading-screen {
+        /* Pantalla de bienvenida */
+        #welcome-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--rosa-bebe) 0%, var(--lila-pastel) 50%, var(--celeste-bebe) 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
             z-index: 1000;
-            transition: opacity 1s ease;
+            padding: 20px;
         }
 
-        .loading-content h1 {
-            font-size: clamp(2rem, 6vw, 3.5rem);
-            color: #6A5B7D;
+        .welcome-content h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            color: var(--rosa-bebe);
             margin-bottom: 20px;
-            text-align: center;
-            animation: pulse 2s infinite;
+            text-shadow: 0 0 20px var(--rosa-neon);
+            animation: welcome-pulse 2s ease-in-out infinite;
         }
 
-        .loading-content p {
-            font-size: clamp(1rem, 3vw, 1.3rem);
-            color: #7A6B8D;
-            text-align: center;
-            margin: 5px 0;
+        .welcome-content p {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--lila-pastel);
+            margin: 10px 0;
+            line-height: 1.4;
         }
 
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid var(--purple-bts);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px 0;
+        .start-button {
+            background: linear-gradient(45deg, var(--purple-bts), var(--rosa-neon));
+            border: none;
+            padding: 18px 45px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.4rem;
+            font-family: 'Mali', cursive;
+            cursor: pointer;
+            margin-top: 40px;
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+            transition: all 0.3s ease;
+            animation: button-glow 2s ease-in-out infinite alternate;
         }
 
-        /* Mundo 3D */
-        #world-container {
+        .start-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(255, 107, 157, 0.7);
+        }
+
+        /* Contenedor principal */
+        #experience-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            perspective: 1500px;
             display: none;
-        }
-
-        .world {
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         /* Escenas */
@@ -103,58 +107,86 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform-style: preserve-3d;
             display: none;
+            overflow: hidden;
         }
 
         .scene.active {
             display: block;
         }
 
-        /* Escena 1: Jardín de Nieve - FONDO OSCURO PARA VER NIEVE */
+        /* Escena 1: Jardín de Nieve Taekook */
         #snow-garden {
             background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #2a2a6a 100%);
         }
 
-        /* Escena 2: Universo - FONDO ESPACIAL */
+        /* Escena 2: Universo Mikrokosmos */
         #universe {
             background: linear-gradient(135deg, #000011 0%, #000033 50%, #000055 100%);
         }
 
-        /* Elementos 3D - AHORA SON MOVIBLES */
+        /* Escena 3: Hogar K-Drama */
+        #k-drama-home {
+            background: linear-gradient(135deg, #2d1b33 0%, #4a2c5c 50%, #6b3f8c 100%);
+        }
+
+        /* Escena 4: Galería del Amor */
+        #love-gallery {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
+        }
+
+        /* Fotos movibles */
         .photo-frame {
             position: absolute;
-            width: 180px;
-            height: 220px;
+            width: 160px;
+            height: 200px;
             background: white;
-            border: 8px solid var(--lila-pastel);
-            border-radius: 20px;
-            transform-style: preserve-3d;
+            border: 6px solid var(--lila-pastel);
+            border-radius: 15px;
             box-shadow: 
-                0 15px 35px rgba(0,0,0,0.5),
-                0 0 20px var(--rosa-bebe);
+                0 10px 25px rgba(0,0,0,0.4),
+                0 0 15px var(--rosa-bebe);
             cursor: grab;
             transition: all 0.3s ease;
             touch-action: none;
             user-select: none;
+            z-index: 10;
         }
 
         .photo-frame:active {
             cursor: grabbing;
-            transform: scale(1.1) rotateZ(5deg);
+            transform: scale(1.08);
             box-shadow: 
-                0 20px 40px rgba(0,0,0,0.6),
-                0 0 30px var(--purple-bts);
+                0 15px 35px rgba(0,0,0,0.6),
+                0 0 25px var(--purple-bts);
+            z-index: 100;
         }
 
         .photo-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 12px;
+            border-radius: 10px;
         }
 
-        /* NIEVE VISIBLE - COLOR BLANCO SOBRE FONDO OSCURO */
+        /* Elementos decorativos */
+        .floating-heart {
+            position: absolute;
+            font-size: 1.8rem;
+            animation: float-heart 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .bts-element {
+            position: absolute;
+            font-size: 2rem;
+            animation: float-bts 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Nieve */
         .snowflake {
             position: absolute;
             background: white;
@@ -162,40 +194,54 @@
             opacity: 0.9;
             animation: fall linear infinite;
             pointer-events: none;
-            z-index: 5;
+            z-index: 2;
         }
 
-        /* ESTRELLAS VISIBLES */
+        /* Estrellas */
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
-            animation: twinkle 3s infinite;
+            animation: twinkle 4s infinite;
             pointer-events: none;
-            z-index: 5;
+            z-index: 2;
+        }
+
+        /* Mensajes especiales */
+        .special-message {
+            position: absolute;
+            font-size: 1.3rem;
+            color: var(--rosa-neon);
+            text-shadow: 0 0 10px currentColor;
+            animation: message-float 5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 8;
+            font-weight: 600;
+            text-align: center;
         }
 
         /* Botones de navegación */
         .nav-button {
             position: fixed;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
             border: 2px solid var(--lila-pastel);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            z-index: 200;
+            backdrop-filter: blur(15px);
             transition: all 0.3s ease;
             color: white;
+            font-size: 1.3rem;
         }
 
         .nav-button:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.15);
         }
 
         .nav-prev { left: 20px; top: 50%; transform: translateY(-50%); }
@@ -206,16 +252,87 @@
             background: rgba(138, 43, 226, 0.4);
             border-color: var(--purple-bts);
         }
-
-        /* Animaciones */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .nav-menu { 
+            top: 20px; 
+            left: 20px; 
+            background: rgba(255, 107, 157, 0.4);
+            border-color: var(--rosa-neon);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
+        /* Indicador de escena */
+        .scene-indicator {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--lila-pastel);
+            padding: 12px 25px;
+            border-radius: 30px;
+            backdrop-filter: blur(15px);
+            z-index: 190;
+            font-size: 1rem;
+            border: 1px solid var(--lila-pastel);
+            box-shadow: 0 0 20px rgba(216, 191, 216, 0.3);
+        }
+
+        /* Menú de escenas */
+        #scene-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid var(--lila-pastel);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            z-index: 180;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .scene-option {
+            padding: 12px 20px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Mali', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .scene-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* Animaciones */
+        @keyframes welcome-pulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--rosa-neon); }
+            50% { transform: scale(1.05); text-shadow: 0 0 30px var(--rosa-neon); }
+        }
+
+        @keyframes button-glow {
+            0% { box-shadow: 0 0 30px rgba(255, 107, 157, 0.5); }
+            100% { box-shadow: 0 0 40px rgba(255, 107, 157, 0.8); }
+        }
+
+        @keyframes float-heart {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            33% { transform: translateY(-20px) rotate(120deg) scale(1.1); }
+            66% { transform: translateY(-10px) rotate(240deg) scale(0.9); }
+        }
+
+        @keyframes float-bts {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-25px) rotate(90deg); }
+            50% { transform: translateY(-15px) rotate(180deg); }
+            75% { transform: translateY(-30px) rotate(270deg); }
         }
 
         @keyframes fall {
@@ -227,92 +344,110 @@
 
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.5); }
+            50% { opacity: 1; transform: scale(1.3); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+        @keyframes message-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-25px) rotate(5deg); opacity: 1; }
         }
 
-        /* Mensajes flotantes */
-        .floating-message {
-            position: absolute;
-            font-size: 1.4rem;
-            color: var(--rosa-bebe);
-            text-shadow: 0 0 15px currentColor;
-            animation: float 4s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 20;
-            font-weight: 600;
-        }
-
-        /* Indicador de escena */
-        .scene-indicator {
+        /* Efectos de partículas */
+        #particles-canvas {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            z-index: 90;
-            font-size: 0.9rem;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .nav-button {
-                width: 45px;
-                height: 45px;
-                font-size: 0.9rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.1rem;
             }
-            .nav-prev { left: 10px; }
-            .nav-next { right: 10px; }
+            .nav-prev { left: 15px; }
+            .nav-next { right: 15px; }
             .photo-frame {
                 width: 140px;
-                height: 180px;
+                height: 175px;
+            }
+            .scene-indicator {
+                bottom: 20px;
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .photo-frame {
+                width: 120px;
+                height: 150px;
+            }
+            .welcome-content h1 {
+                font-size: clamp(2rem, 7vw, 3rem);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Pantalla de carga -->
-    <div id="loading-screen">
-        <div class="loading-content">
-            <h1>💜 Nuestro Universo Taekook 💜</h1>
-            <p>Preparando algo mágico para ti...</p>
-            <p>mi princesa ALEJ 💕</p>
-            <div class="loading-spinner"></div>
-            <p style="font-size: 0.9rem; margin-top: 20px;">
-                Team Taekook forever! 🐻🐰
+    <!-- Pantalla de bienvenida -->
+    <div id="welcome-screen">
+        <div class="welcome-content">
+            <h1>💜 Para Mi Princesa ALEJ 💜</h1>
+            <p>Este universo fue creado con todo mi amor</p>
+            <p>para la mujer que ilumina mi vida</p>
+            <p style="margin-top: 30px; font-size: 1.1rem; color: var(--celeste-bebe);">
+                Donde nuestro amor brilla más que todas las estrellas juntas
             </p>
-        </div>
-    </div>
-
-    <!-- Contenedor del mundo 3D -->
-    <div id="world-container">
-        <div class="world" id="world">
-            <!-- Escena 1: Jardín de Nieve Taekook -->
-            <div id="snow-garden" class="scene active">
-                <!-- Fotos se agregarán dinámicamente -->
-            </div>
-
-            <!-- Escena 2: Universo Mikrokosmos -->
-            <div id="universe" class="scene">
-                <!-- Estrellas y planetas se agregarán dinámicamente -->
+            <button class="start-button" onclick="startExperience()">
+                💖 Entrar a Nuestro Mundo
+            </button>
+            <div style="margin-top: 40px; font-size: 0.9rem; color: var(--lavanda);">
+                Team Taekook Forever 🐻❤️🐰
             </div>
         </div>
     </div>
 
-    <!-- Indicador de escena -->
-    <div class="scene-indicator" id="scene-indicator">
-        Jardín de Nieve Taekook
+    <!-- Contenedor principal -->
+    <div id="experience-container">
+        <!-- Escena 1: Jardín de Nieve Taekook -->
+        <div id="snow-garden" class="scene active">
+            <!-- Fotos y elementos se agregarán dinámicamente -->
+        </div>
+
+        <!-- Escena 2: Universo Mikrokosmos -->
+        <div id="universe" class="scene">
+            <!-- Elementos del universo -->
+        </div>
+
+        <!-- Escena 3: Hogar K-Drama -->
+        <div id="k-drama-home" class="scene">
+            <!-- Elementos del hogar -->
+        </div>
+
+        <!-- Escena 4: Galería del Amor -->
+        <div id="love-gallery" class="scene">
+            <!-- Galería de fotos -->
+        </div>
     </div>
 
-    <!-- Botones de navegación -->
+    <!-- Canvas para efectos -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Audio -->
+    <audio id="background-music" loop>
+        <source src="https://audio.jukehost.co.uk/s9fVfq0d9Q2p5l3qK3U4c8Q9p8J3y2a" type="audio/mpeg">
+    </audio>
+
+    <!-- Navegación -->
+    <button class="nav-button nav-menu" onclick="toggleSceneMenu()">
+        <i class="fas fa-compass"></i>
+    </button>
     <button class="nav-button nav-audio" onclick="toggleMusic()">
         <i id="music-icon" class="fas fa-volume-up"></i>
     </button>
@@ -323,13 +458,42 @@
         <i class="fas fa-chevron-right"></i>
     </button>
 
+    <!-- Menú de escenas -->
+    <div id="scene-menu">
+        <button class="scene-option" onclick="loadScene(0)">❄️ Jardín de Nieve Taekook</button>
+        <button class="scene-option" onclick="loadScene(1)">🌌 Universo Mikrokosmos</button>
+        <button class="scene-option" onclick="loadScene(2)">🏡 Hogar K-Drama</button>
+        <button class="scene-option" onclick="loadScene(3)">💞 Galería del Amor</button>
+    </div>
+
+    <!-- Indicador de escena -->
+    <div class="scene-indicator" id="scene-indicator">
+        ❄️ Jardín de Nieve Taekook
+    </div>
+
     <script>
         // ========== CONFIGURACIÓN ==========
         const scenes = [
-            { id: 'snow-garden', name: 'Jardín de Nieve Taekook' },
-            { id: 'universe', name: 'Universo Mikrokosmos' },
-            { id: 'k-drama-home', name: 'Hogar K-Drama' },
-            { id: 'love-gallery', name: 'Galería del Amor' }
+            { 
+                id: 'snow-garden', 
+                name: '❄️ Jardín de Nieve Taekook',
+                music: 'snow-flower'
+            },
+            { 
+                id: 'universe', 
+                name: '🌌 Universo Mikrokosmos',
+                music: 'mikrokosmos'
+            },
+            { 
+                id: 'k-drama-home', 
+                name: '🏡 Hogar K-Drama',
+                music: 'heartbeat'
+            },
+            { 
+                id: 'love-gallery', 
+                name: '💞 Galería del Amor',
+                music: 'best-of-me'
+            }
         ];
 
         const photos = [
@@ -347,28 +511,44 @@
             'https://literland.github.io/mytaekook/images.jpeg'
         ];
 
+        const messages = [
+            "💖 Eres mi todo mi amor",
+            "💜 Team Taekook por siempre",
+            "🌸 Nuestro amor es eterno", 
+            "✨ Eres mi estrella favorita",
+            "🐻🐰 TaeKook soulmates forever",
+            "❄️ Nieve y amor infinito",
+            "🌟 Nuestro mikrokosmos",
+            "💕 Eres mi razón de ser",
+            "🦋 Vuelas en mi corazón",
+            "🎶 Nuestra canción favorita",
+            "🏡 Nuestro hogar eres tú",
+            "💘 Te amo más cada día"
+        ];
+
         let currentSceneIndex = 0;
         let isMusicPlaying = false;
-        let isExperienceLoaded = false;
-        let draggedElement = null;
-        let dragOffset = { x: 0, y: 0 };
+        let isExperienceStarted = false;
 
         // ========== INICIALIZACIÓN ==========
         function init() {
             createSnowflakes();
             createStars();
-            createFloatingMessages();
-            loadScene(0);
+            createFloatingHearts();
+            createBTSElements();
+            createSpecialMessages();
+            initParticles();
+        }
+
+        function startExperience() {
+            if (isExperienceStarted) return;
+            isExperienceStarted = true;
             
-            // Simular carga
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loading-screen').style.display = 'none';
-                    document.getElementById('world-container').style.display = 'block';
-                    isExperienceLoaded = true;
-                }, 1000);
-            }, 2000);
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('experience-container').style.display = 'block';
+            
+            loadScene(0);
+            playMusic();
         }
 
         // ========== SISTEMA DE ESCENAS ==========
@@ -389,6 +569,9 @@
             
             // Cargar contenido específico
             loadSceneContent(scene.id);
+            
+            // Ocultar menú si está abierto
+            document.getElementById('scene-menu').style.display = 'none';
         }
 
         function loadSceneContent(sceneId) {
@@ -402,29 +585,80 @@
                 case 'universe':
                     loadUniverse(scene);
                     break;
+                case 'k-drama-home':
+                    loadKdramaHome(scene);
+                    break;
+                case 'love-gallery':
+                    loadLoveGallery(scene);
+                    break;
             }
         }
 
         function loadSnowGarden(scene) {
-            // Agregar 6 fotos en posiciones aleatorias
-            for (let i = 0; i < 6; i++) {
-                createDraggablePhoto(scene, i, {
-                    x: Math.random() * 60 + 20,
-                    y: Math.random() * 60 + 20,
-                    z: Math.random() * 200 - 100
-                });
+            // Agregar 4 fotos en posiciones estratégicas
+            const positions = [
+                { x: 25, y: 30 }, { x: 75, y: 30 },
+                { x: 25, y: 70 }, { x: 75, y: 70 }
+            ];
+            
+            for (let i = 0; i < 4; i++) {
+                createDraggablePhoto(scene, i, positions[i]);
             }
+            
+            // Mensajes especiales para esta escena
+            createSceneMessage(scene, "❄️ Nieve de Amor Eterno", 50, 15);
+            createSceneMessage(scene, "🐻🐰 Team Taekook", 50, 85);
         }
 
         function loadUniverse(scene) {
-            // Agregar fotos como planetas en órbita
-            for (let i = 6; i < Math.min(12, photos.length); i++) {
+            // Agregar fotos en forma de constelación
+            for (let i = 4; i < 8; i++) {
+                const angle = (i - 4) * (Math.PI / 2);
                 createDraggablePhoto(scene, i, {
-                    x: 50 + Math.cos(i * 0.8) * 30,
-                    y: 50 + Math.sin(i * 0.8) * 20,
-                    z: i * 25
+                    x: 50 + Math.cos(angle) * 30,
+                    y: 50 + Math.sin(angle) * 20
                 });
             }
+            
+            createSceneMessage(scene, "🌌 Nuestro Mikrokosmos", 50, 10);
+            createSceneMessage(scene, "💫 Estrellas de Amor", 50, 90);
+        }
+
+        function loadKdramaHome(scene) {
+            // Agregar fotos en disposición de hogar
+            const positions = [
+                { x: 20, y: 25 }, { x: 80, y: 25 },
+                { x: 20, y: 75 }, { x: 80, y: 75 }
+            ];
+            
+            for (let i = 8; i < 12; i++) {
+                if (i - 8 < positions.length) {
+                    createDraggablePhoto(scene, i, positions[i - 8]);
+                }
+            }
+            
+            createSceneMessage(scene, "🏡 Nuestro Hogar K-Drama", 50, 15);
+            createSceneMessage(scene, "💕 Amor de Película", 50, 85);
+        }
+
+        function loadLoveGallery(scene) {
+            // Galería con todas las fotos en grid
+            const photosPerRow = 3;
+            const photoWidth = 25;
+            const photoHeight = 20;
+            
+            for (let i = 0; i < photos.length; i++) {
+                const row = Math.floor(i / photosPerRow);
+                const col = i % photosPerRow;
+                
+                createDraggablePhoto(scene, i, {
+                    x: 20 + col * 30,
+                    y: 20 + row * 25
+                });
+            }
+            
+            createSceneMessage(scene, "💞 Galería de Nuestro Amor", 50, 10);
+            createSceneMessage(scene, "📸 Nuestra Historia", 50, 90);
         }
 
         function createDraggablePhoto(scene, photoIndex, position) {
@@ -432,7 +666,6 @@
             frame.className = 'photo-frame';
             frame.style.left = position.x + '%';
             frame.style.top = position.y + '%';
-            frame.style.transform = `translateZ(${position.z}px) rotateY(${Math.random() * 360}deg)`;
             frame.dataset.photoIndex = photoIndex;
             
             const img = document.createElement('img');
@@ -443,14 +676,21 @@
             frame.appendChild(img);
             scene.appendChild(frame);
             
-            // Hacer la foto arrastrable
             makeDraggable(frame);
             
-            // Efecto al hacer click/touch
             frame.addEventListener('click', (e) => {
                 e.stopPropagation();
                 showPhotoMessage(photoIndex, frame);
             });
+        }
+
+        function createSceneMessage(scene, text, x, y) {
+            const message = document.createElement('div');
+            message.className = 'special-message';
+            message.textContent = text;
+            message.style.left = x + '%';
+            message.style.top = y + '%';
+            scene.appendChild(message);
         }
 
         // ========== SISTEMA DE ARRASTRE ==========
@@ -461,13 +701,11 @@
             element.ontouchstart = dragTouchStart;
 
             function dragMouseDown(e) {
-                e = e || window.event;
                 e.preventDefault();
                 pos3 = e.clientX;
                 pos4 = e.clientY;
                 document.onmouseup = closeDragElement;
                 document.onmousemove = elementDrag;
-                element.style.cursor = 'grabbing';
             }
 
             function dragTouchStart(e) {
@@ -477,11 +715,9 @@
                 pos4 = touch.clientY;
                 document.ontouchend = closeDragElement;
                 document.ontouchmove = elementDragTouch;
-                element.style.cursor = 'grabbing';
             }
 
             function elementDrag(e) {
-                e = e || window.event;
                 e.preventDefault();
                 pos1 = pos3 - e.clientX;
                 pos2 = pos4 - e.clientY;
@@ -507,63 +743,54 @@
                 document.onmousemove = null;
                 document.ontouchend = null;
                 document.ontouchmove = null;
-                element.style.cursor = 'grab';
             }
         }
 
         function showPhotoMessage(photoIndex, element) {
-            const messages = [
-                "💖 Eres mi todo mi amor",
-                "💜 Team Taekook por siempre",
-                "🌸 Nuestro amor es eterno", 
-                "✨ Eres mi estrella favorita",
-                "🐻🐰 TaeKook soulmates forever",
-                "❄️ Nieve y amor infinito",
-                "🌟 Nuestro mikrokosmos",
-                "💕 Eres mi razón de ser",
-                "🦋 Vuelas en mi corazón",
-                "🎶 Nuestra canción favorita",
-                "🏡 Nuestro hogar eres tú",
-                "💘 Te amo más cada día"
-            ];
-            
             const message = document.createElement('div');
-            message.className = 'floating-message';
+            message.className = 'special-message';
             message.textContent = messages[photoIndex];
-            message.style.left = (element.offsetLeft + 90) + 'px';
-            message.style.top = (element.offsetTop - 30) + 'px';
+            message.style.left = (element.offsetLeft + 80) + 'px';
+            message.style.top = (element.offsetTop - 40) + 'px';
+            message.style.animation = 'message-float 3s ease-in-out';
+            message.style.fontSize = '1.1rem';
             
             document.body.appendChild(message);
             
             setTimeout(() => {
                 message.style.opacity = '0';
                 setTimeout(() => message.remove(), 1000);
-            }, 2000);
+            }, 2500);
         }
 
         function nextScene() {
-            if (!isExperienceLoaded) return;
+            if (!isExperienceStarted) return;
             const nextIndex = (currentSceneIndex + 1) % scenes.length;
             loadScene(nextIndex);
         }
 
         function previousScene() {
-            if (!isExperienceLoaded) return;
+            if (!isExperienceStarted) return;
             const prevIndex = (currentSceneIndex - 1 + scenes.length) % scenes.length;
             loadScene(prevIndex);
+        }
+
+        function toggleSceneMenu() {
+            const menu = document.getElementById('scene-menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
 
         // ========== EFECTOS VISUALES ==========
         function createSnowflakes() {
             const container = document.body;
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 80; i++) {
                 const snowflake = document.createElement('div');
                 snowflake.className = 'snowflake';
                 snowflake.style.left = Math.random() * 100 + 'vw';
-                snowflake.style.width = Math.random() * 5 + 2 + 'px';
+                snowflake.style.width = Math.random() * 4 + 2 + 'px';
                 snowflake.style.height = snowflake.style.width;
-                snowflake.style.animationDuration = Math.random() * 5 + 3 + 's';
-                snowflake.style.animationDelay = Math.random() * 10 + 's';
+                snowflake.style.animationDuration = Math.random() * 4 + 3 + 's';
+                snowflake.style.animationDelay = Math.random() * 8 + 's';
                 snowflake.style.opacity = Math.random() * 0.8 + 0.2;
                 container.appendChild(snowflake);
             }
@@ -571,88 +798,106 @@
 
         function createStars() {
             const container = document.body;
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 120; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + 'vw';
                 star.style.top = Math.random() * 100 + 'vh';
-                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.width = Math.random() * 2 + 1 + 'px';
                 star.style.height = star.style.width;
-                star.style.animationDelay = Math.random() * 5 + 's';
-                star.style.opacity = Math.random() * 0.7 + 0.3;
+                star.style.animationDelay = Math.random() * 6 + 's';
+                star.style.opacity = Math.random() * 0.6 + 0.2;
                 container.appendChild(star);
             }
         }
 
-        function createFloatingMessages() {
-            const messages = ["TE AMO", "TEAM TAEKOOK", "FOREVER", "MY LOVE", "SOULMATES", "💜 BTS 💜"];
-            for (let i = 0; i < 12; i++) {
+        function createFloatingHearts() {
+            const hearts = ['💖', '💜', '💕', '💞', '💓'];
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.animationDelay = Math.random() * 10 + 's';
+                heart.style.fontSize = (Math.random() * 1 + 1.5) + 'rem';
+                document.body.appendChild(heart);
+            }
+        }
+
+        function createBTSElements() {
+            const btsSymbols = ['💜', '🐻', '🐰', '🌟', '✨'];
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                element.className = 'bts-element';
+                element.textContent = btsSymbols[Math.floor(Math.random() * btsSymbols.length)];
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.top = Math.random() * 100 + 'vh';
+                element.style.animationDelay = Math.random() * 12 + 's';
+                element.style.fontSize = (Math.random() * 1.2 + 1.8) + 'rem';
+                document.body.appendChild(element);
+            }
+        }
+
+        function createSpecialMessages() {
+            const specialTexts = [
+                "TE AMO ALEJ", "TEAM TAEKOOK", "FOREVER", 
+                "MY LOVE", "SOULMATES", "BTS 💜", 
+                "TAE 🐻", "KOOK 🐰", "KING THE LAND",
+                "SNOW FLOWER", "MIKROKOSMOS"
+            ];
+            
+            for (let i = 0; i < 15; i++) {
                 const message = document.createElement('div');
-                message.className = 'floating-message';
-                message.textContent = messages[Math.floor(Math.random() * messages.length)];
+                message.className = 'special-message';
+                message.textContent = specialTexts[Math.floor(Math.random() * specialTexts.length)];
                 message.style.left = Math.random() * 80 + 10 + '%';
                 message.style.top = Math.random() * 80 + 10 + '%';
-                message.style.animationDelay = Math.random() * 8 + 's';
-                message.style.fontSize = (Math.random() * 1 + 1.2) + 'rem';
+                message.style.animationDelay = Math.random() * 15 + 's';
+                message.style.fontSize = (Math.random() * 0.8 + 1.1) + 'rem';
                 document.body.appendChild(message);
             }
         }
 
-        // ========== CONTROL 360° ==========
-        let isDraggingWorld = false;
-        let startX, startY;
-        let rotationY = 0, rotationX = 0;
-
-        document.addEventListener('mousedown', startWorldDrag);
-        document.addEventListener('touchstart', startWorldDrag);
-
-        function startWorldDrag(e) {
-            if (!isExperienceLoaded) return;
-            if (e.target.closest('.photo-frame')) return; // No arrastrar mundo si se toca foto
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
             
-            isDraggingWorld = true;
-            startX = e.clientX || e.touches[0].clientX;
-            startY = e.clientY || e.touches[0].clientY;
-        }
-
-        document.addEventListener('mousemove', dragWorld);
-        document.addEventListener('touchmove', dragWorld);
-
-        function dragWorld(e) {
-            if (!isDraggingWorld || !isExperienceLoaded) return;
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
             
-            const currentX = e.clientX || e.touches[0].clientX;
-            const currentY = e.clientY || e.touches[0].clientY;
-            
-            const deltaX = currentX - startX;
-            const deltaY = currentY - startY;
-            
-            rotationY += deltaX * 0.3;
-            rotationX += deltaY * 0.2;
-            
-            document.getElementById('world').style.transform = 
-                `rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
-            
-            startX = currentX;
-            startY = currentY;
-        }
-
-        document.addEventListener('mouseup', endWorldDrag);
-        document.addEventListener('touchend', endWorldDrag);
-
-        function endWorldDrag() {
-            isDraggingWorld = false;
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
         }
 
         // ========== MÚSICA ==========
+        function playMusic() {
+            const audio = document.getElementById('background-music');
+            audio.volume = 0.7;
+            audio.play().then(() => {
+                isMusicPlaying = true;
+                updateMusicIcon();
+            }).catch(error => {
+                console.log('La música requiere interacción del usuario');
+            });
+        }
+
         function toggleMusic() {
-            const icon = document.getElementById('music-icon');
+            const audio = document.getElementById('background-music');
             if (isMusicPlaying) {
-                icon.className = 'fas fa-volume-mute';
+                audio.pause();
             } else {
-                icon.className = 'fas fa-volume-up';
+                audio.play();
             }
             isMusicPlaying = !isMusicPlaying;
+            updateMusicIcon();
+        }
+
+        function updateMusicIcon() {
+            const icon = document.getElementById('music-icon');
+            icon.className = isMusicPlaying ? 'fas fa-volume-up' : 'fas fa-volume-mute';
         }
 
         // ========== INICIAR ==========

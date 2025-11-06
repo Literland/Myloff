@@ -209,7 +209,7 @@ body, html {
 /* Nieve */
 .snowflake {
     position: absolute;
-    background: white;
+    color: white;
     border-radius: 50%;
     opacity: 0.9;
     animation: fall linear infinite;
@@ -384,7 +384,10 @@ body, html {
 }
 
 @keyframes fall {
-    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    to {
+        transform: translateY(105vh) translateX(50px) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 @keyframes twinkle {

@@ -3,57 +3,57 @@ const scenes = [
     { 
         id: 'snow-garden', 
         name: '❄️ Jardín',
-        music: 'https://literland.github.io/mytaekook/Snow%20Flower%20(feat.%20Peakboy).mp3'
+        music: 'Music/Snow Flower (feat. Peakboy).mp3'
     },
     { 
         id: 'universe', 
         name: '🌌 Nuestro Universo',
-        music: 'https://literland.github.io/mytaekook/Best%20Of%20Me.mp3'
+        music: 'Music/Best Of Me.mp3'
     },
     { 
         id: 'k-drama-home', 
         name: '🏡 Hogar',
-        music: 'https://literland.github.io/mytaekook/HOME.mp3'
+        music: 'Music/HOME.mp3'
     },
     { 
         id: 'love-gallery', 
         name: '💞 Galería del Alma',
-        music: 'https://literland.github.io/mytaekook/Confess%20To%20You.mp3'
+        music: 'Music/Confess To You.mp3'
     }
 ];
 
 const photos = [
-    'https://literland.github.io/mytaekook/14d8c2703f5903579bd3d8e809f7dd39.jpg',
-    'https://literland.github.io/mytaekook/17ac5a41c03f28b8ef49f4292390d48d.jpg',
-    'https://literland.github.io/mytaekook/20240721_183505_lmc_8.4.NIGHT.jpg',
-    'https://literland.github.io/mytaekook/20240729_204443_lmc_8.4.NIGHT.jpg',
-    'https://literland.github.io/mytaekook/7b53f54291b6bc7d5fdd7abbdfe6bfd3.jpg',
-    'https://literland.github.io/mytaekook/8f3e162fade4cafcc3840ab9fe9e8a83.jpg',
-    'https://literland.github.io/mytaekook/IMG_20240721_182828.jpg',
-    'https://literland.github.io/mytaekook/IMG_20240804_155001.jpg',
-    'https://literland.github.io/mytaekook/image%20(1).jpg',
-    'https://literland.github.io/mytaekook/image.jpg',
-    'https://literland.github.io/mytaekook/images%20(1).jpeg',
-    'https://literland.github.io/mytaekook/images.jpeg',
-    'https://literland.github.io/mytaekook/images.jpeg',
-    'https://raw.githubusercontent.com/Literland/mytaekook/main/flores.png',
-    'https://raw.githubusercontent.com/Literland/mytaekook/main/demanos.png',
-    'https://raw.githubusercontent.com/Literland/mytaekook/main/casados.png'
+    'Photos/14d8c2703f5903579bd3d8e809f7dd39.jpg',
+    'Photos/17ac5a41c03f28b8ef49f4292390d48d.jpg',
+    'Photos/20240721_183505_lmc_8.4.NIGHT.jpg',
+    'Photos/20240729_204443_lmc_8.4.NIGHT.jpg',
+    'Photos/7b53f54291b6bc7d5fdd7abbdfe6bfd3.jpg',
+    'Photos/8f3e162fade4cafcc3840ab9fe9e8a83.jpg',
+    'Photos/IMG_20240721_182828.jpg',
+    'Photos/IMG_20240804_155001.jpg',
+    'Photos/image (1).jpg',
+    'Photos/image.jpg',
+    'Photos/images (1).jpeg',
+    'Photos/images.jpeg',
+    'Photos/images.jpeg',
+    'Photos/flores.png',
+    'Photos/demanos.png',
+    'Photos/casados.png'
 ];
 
 const messages = [
-    "💖 Eres mi todo, mi supitera",
-    "💜 TuyYo Forever",
-    "🌸 Nuestro amor es eterno, bebé", 
-    "✨ Eres mi estrella favorita",
-    "🐻🐰 soulmates forever",
-    "❄️ Nieve y amor infinito",
-    "🌟 Nuestro mikrokosmos",
-    "💕 Eres mi razón de ser",
-    "🦋 Vuelas en mi corazón",
-    "🎶 Nuestra canción favorita",
-    "🏡 Nuestro hogar eres tú",
-    "💘 Te amo más cada día"
+    "💖 Un universo en tu mirada.",
+    "💜 Juntos, nuestro propio cosmos.",
+    "🌸 Contigo, cada momento es un verso.",
+    "✨ Brillas más que cualquier constelación.",
+    "🐻🐰 Un hilo invisible nos une.",
+    "❄️ Nuestro amor, un paisaje invernal.",
+    "🌟 En nuestro mikrokosmos particular.",
+    "💕 Eres el ancla de mi alma.",
+    "🦋 Tus alas, mi cielo.",
+    "🎶 La melodía de nuestro destino.",
+    "🏡 Contigo, estoy en casa.",
+    "💘 Mi amor por ti crece con cada latido."
 ];
 
 let currentSceneIndex = 0;
@@ -90,29 +90,27 @@ function loadScene(index) {
     // Efecto de transición
     const transition = document.getElementById('scene-transition');
     transition.classList.add('active');
-    
+
+    currentSceneIndex = index;
+    const scene = scenes[index];
+
+    document.querySelectorAll('.scene').forEach(scene => {
+        scene.classList.remove('active');
+    });
+
+    document.getElementById(scene.id).classList.add('active');
+    document.getElementById('scene-indicator').textContent = scene.name;
+
+    loadSceneContent(scene.id);
+    document.getElementById('scene-menu').style.display = 'none';
+
+    // Reproducir música de la escena actual
+    playSceneMusic(index);
+
+    // Finalizar transición
     setTimeout(() => {
-        currentSceneIndex = index;
-        const scene = scenes[index];
-        
-        document.querySelectorAll('.scene').forEach(scene => {
-            scene.classList.remove('active');
-        });
-        
-        document.getElementById(scene.id).classList.add('active');
-        document.getElementById('scene-indicator').textContent = scene.name;
-        
-        loadSceneContent(scene.id);
-        document.getElementById('scene-menu').style.display = 'none';
-        
-        // Reproducir música de la escena actual
-        playSceneMusic(index);
-        
-        // Finalizar transición
-        setTimeout(() => {
-            transition.classList.remove('active');
-        }, 300);
-    }, 500);
+        transition.classList.remove('active');
+    }, 300);
 }
 
 function loadSceneContent(sceneId) {
@@ -455,15 +453,16 @@ function updateMusicIcon() {
 
 // ========== EFECTOS VISUALES ==========
 function createSnowflakes() {
-    for (let i = 0; i < 60; i++) {
+    const snowflakeChars = ['❄', '❆', '❅'];
+    for (let i = 0; i < 100; i++) {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
+        snowflake.textContent = snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)];
         snowflake.style.left = Math.random() * 100 + 'vw';
-        snowflake.style.width = Math.random() * 5 + 3 + 'px';
-        snowflake.style.height = snowflake.style.width;
-        snowflake.style.animationDuration = Math.random() * 6 + 4 + 's';
+        snowflake.style.fontSize = Math.random() * 1.5 + 0.5 + 'rem';
+        snowflake.style.animationDuration = Math.random() * 10 + 5 + 's';
         snowflake.style.animationDelay = Math.random() * 10 + 's';
-        snowflake.style.opacity = Math.random() * 0.6 + 0.3;
+        snowflake.style.opacity = Math.random() * 0.7 + 0.3;
         document.body.appendChild(snowflake);
     }
 }

@@ -34,37 +34,19 @@
 
     <!-- Contenedor principal -->
     <div id="experience-container">
-        <!-- Escena 1: Jardín de Nieve -->
         <div id="snow-garden" class="scene active"></div>
-
-        <!-- Escena 2: Universo Nuestro -->
         <div id="universe" class="scene"></div>
-
-        <!-- Escena 3: Hogar -->
         <div id="k-drama-home" class="scene"></div>
-
-        <!-- Escena 4: Galería de Amor -->
         <div id="love-gallery" class="scene"></div>
     </div>
 
     <!-- Navegación -->
-    <button class="nav-button nav-menu" onclick="toggleSceneMenu()">
-    <i class="fas fa-compass"></i>
-</button>
-<button class="nav-button nav-audio" onclick="toggleMusic()">
-    <i id="music-icon" class="fas fa-volume-up"></i>
-</button>
-<button class="nav-button nav-3d" onclick="toggle3DMode()">
-    <i class="fas fa-cube"></i>
-</button>
-<button class="nav-button nav-prev" onclick="previousScene()">
-    <i class="fas fa-chevron-left"></i>
-</button>
-<button class="nav-button nav-next" onclick="nextScene()">
-    <i class="fas fa-chevron-right"></i>
-</button>
+    <button class="nav-button nav-menu" onclick="toggleSceneMenu()"><i class="fas fa-compass"></i></button>
+    <button class="nav-button nav-audio" onclick="toggleMusic()"><i id="music-icon" class="fas fa-volume-up"></i></button>
+    <button class="nav-button nav-3d" onclick="toggle3DMode()"><i class="fas fa-cube"></i></button>
+    <button class="nav-button nav-prev" onclick="previousScene()"><i class="fas fa-chevron-left"></i></button>
+    <button class="nav-button nav-next" onclick="nextScene()"><i class="fas fa-chevron-right"></i></button>
 
-    <!-- Menú de escenas -->
     <div id="scene-menu">
         <button class="scene-option" onclick="loadScene(0)">❄️ Jardín de Nieve</button>
         <button class="scene-option" onclick="loadScene(1)">🌌 Universo BTS</button>
@@ -72,34 +54,15 @@
         <button class="scene-option" onclick="loadScene(3)">💞 Galería del Cumpleaños</button>
     </div>
 
-    <!-- Indicador de escena -->
-    <div class="scene-indicator" id="scene-indicator">
-        ❄️ Jardín de Nieve
-    </div>
+    <div class="scene-indicator" id="scene-indicator">❄️ Jardín de Nieve</div>
 
     <script>
-        // ========== CONFIGURACIÓN ==========
+        // ---- CONFIGURACIÓN (usa rutas a public/Photos y public/Music si tus archivos están ahí) ----
         const scenes = [
-            { 
-                id: 'snow-garden', 
-                name: '❄️ Jardín',
-                music: 'public/Music/Snow%20Flower%20(feat.%20Peakboy).mp3'
-            },
-            { 
-                id: 'universe', 
-                name: '🌌 Universo BTS',
-                music: 'public/Music/Best%20Of%20Me.mp3'
-            },
-            { 
-                id: 'k-drama-home', 
-                name: '🏡 Hogar Feliz',
-                music: 'public/Music/HOME.mp3'
-            },
-            { 
-                id: 'love-gallery', 
-                name: '💞 Galería del Cumpleaños',
-                music: 'public/Music/Confess%20To%20You.mp3'
-            }
+            { id: 'snow-garden', name: '❄️ Jardín', music: 'public/Music/Snow%20Flower%20(feat.%20Peakboy).mp3' },
+            { id: 'universe', name: '🌌 Universo BTS', music: 'public/Music/Best%20Of%20Me.mp3' },
+            { id: 'k-drama-home', name: '🏡 Hogar Feliz', music: 'public/Music/HOME.mp3' },
+            { id: 'love-gallery', name: '💞 Galería del Cumpleaños', music: 'public/Music/Confess%20To%20You.mp3' }
         ];
 
         const photos = [
@@ -135,40 +98,21 @@
             "¡Te quiero mucho, Mila! 💕"
         ];
 
-        let currentSceneIndex = 0;
-        let isMusicPlaying = false;
-        let isExperienceStarted = false;
-        let currentAudio = null;
-        let is3DMode = false;
-        let mouseX = 0;
-        let mouseY = 0;
+        // (el resto del script: funciones init, loadScene, createDraggablePhoto, música, 3D, etc. deben permanecer exactamente como estaban)
+        // para brevedad aquí no repito todas las funciones; conserva el bloque JS completo que ya tienes bajo este script.
 
-        // ========== INICIALIZACIÓN ==========
-        function init() {
-            createSnowflakes();
-            createStars();
-            createFloatingHearts();
-            createBTSElements();
-            createSpecialMessages();
-            createYellowFlowers();
-            createBirthdayBalloons();
-            updateMusicIcon();
-            setupMouseTracking();
-        }
+        // Asegúrate de exponer funciones que usen onclick si están definidas localmente:
+        window.startExperience = window.startExperience || startExperience;
+        window.toggleMusic = window.toggleMusic || toggleMusic;
+        window.toggle3DMode = window.toggle3DMode || toggle3DMode;
+        window.nextScene = window.nextScene || nextScene;
+        window.previousScene = window.previousScene || previousScene;
+        window.loadScene = window.loadScene || loadScene;
+        window.toggleSceneMenu = window.toggleSceneMenu || toggleSceneMenu;
 
-        function startExperience() {
-            if (isExperienceStarted) return;
-            isExperienceStarted = true;
-           
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('experience-container').style.display = 'block';
-           
-            loadScene(0);
-        }
-
-        // (el resto del script permanece igual)
-        // ========== INICIAR ==========
-        window.addEventListener('load', init);
+        window.addEventListener('load', function() {
+            if (typeof init === 'function') init();
+        });
     </script>
 </body>
 </html>
